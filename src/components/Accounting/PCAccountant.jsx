@@ -346,7 +346,6 @@ export default function PCAccountant() {
               toneMapped={false}
             />
           </mesh>
-          {/* Video description text */}
         </>
       )}
 

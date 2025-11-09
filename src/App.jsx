@@ -88,7 +88,7 @@ function LoadingFallback({ onLoadingChange }) {
           fontFamily: "sans-serif",
         }}
       >
-        <span>Loading (it may take a while...)</span>
+        <span>Loading may take a moment... </span>
         <span>{progress.toFixed(0)}%</span>
       </div>
     </Html>

@@ -35,7 +35,7 @@ import Sky from "./Sky";
 import { useFrame } from "@react-three/fiber";
 import DoorSign from "./DoorSign";
 // import { validateModelPath, validateAssetPath } from "../../utils/security";
-import { validateModelPath, validateAssetPath } from "../../utils/security.js";
+import { validateModelPath, validateAssetPath } from "../../utils/security";
 export default function Avatar_dev_place({
   setFrameLoopMode,
   props,
@@ -56,6 +56,7 @@ export default function Avatar_dev_place({
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const performanceMode = isVideoPlaying;
   const [hideObjects, setHideObjects] = useState(true);
+
   const safeAudioPath = validateAssetPath("/panel_click.mp3")
     ? "/panel_click.mp3"
     : null;

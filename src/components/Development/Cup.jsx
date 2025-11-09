@@ -1,7 +1,7 @@
 import React, { useState, useEffect, forwardRef, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useSpring, animated } from "@react-spring/three";
-import { validateModelPath, validateAssetPath } from "../utils/security";
+import { validateModelPath, validateAssetPath } from "../../utils/security";
 
 function useShakeAndScale() {
   const [hovered, setHovered] = useState(false);

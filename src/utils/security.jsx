@@ -167,15 +167,108 @@
 //   window.validateModelPath = validateModelPath;
 // }
 
-export const validateAssetPath = (path) => {
+// 3ος
+// export const validateAssetPath = (path) => {
+//   if (!path || typeof path !== "string") return false;
+
+//   const allowedOrigins = [window.location.origin, "http://localhost:4173"];
+
+//   const allowedPrefixes = [
+//     "/textures/",
+//     "/objects/",
+//     "/videos/",
+//     "/animations/",
+//     "/models/",
+//     "/audios/",
+//   ];
+
+//   const validExtensions = [
+//     ".jpg",
+//     ".jpeg",
+//     ".png",
+//     ".ktx2",
+//     ".mp4",
+//     ".webm",
+//     ".ogg",
+//     ".glb",
+//     ".gltf",
+//     ".fbx",
+//     ".mp3",
+//   ];
+
+//   const lowerPath = path.toLowerCase();
+//   const fromAllowedOrigin =
+//     allowedOrigins.some((origin) => path.startsWith(origin)) ||
+//     path.startsWith("/");
+
+//   // const hasAllowedPrefix = allowedPrefixes.some((p) => lowerPath.startsWith(p));
+//   const hasAllowedPrefix =
+//     allowedPrefixes.some((p) => lowerPath.startsWith(p)) ||
+//     allowedPrefixes.some((p) => path.startsWith(window.location.origin + p));
+
+//   const hasValidExt = validExtensions.some((ext) => lowerPath.endsWith(ext));
+
+//   // Block attempts to go up directories
+//   if (path.includes("..")) return false;
+
+//   return fromAllowedOrigin && hasAllowedPrefix && hasValidExt;
+// };
+
+// // Optional separate wrappers (for readability)
+// export const validateModelPath = (path) => validateAssetPath(path);
+// export const validateVideoPath = (path) => validateAssetPath(path);
+// export const validateAnimationPath = (path) => validateAssetPath(path);
+
+// export const testSecurity = () => {
+//   const tests = [
+//     { path: "/textures/TexturesCompressed/SoundOn.jpg", expected: true },
+//     { path: "/Objects/Final/avatar.glb", expected: true },
+//     { path: "/videos/ReactFinal.mp4", expected: true },
+//     { path: "https://evil.com/hack.glb", expected: false },
+//     { path: "../textures/malicious.jpg", expected: false },
+//   ];
+
+//   let allPassed = true;
+//   console.log("🔒 Running security tests...");
+
+//   tests.forEach((t) => {
+//     const result = validateAssetPath(t.path);
+//     console.log(` ${t.path} → ${result} (expected ${t.expected})`);
+//     if (result !== t.expected) allPassed = false;
+//   });
+
+//   if (allPassed) console.log("🎉 ALL SECURITY TESTS PASSED");
+//   else console.warn("⚠️ Some tests failed");
+// };
+
+// if (process.env.NODE_ENV === "development") {
+//   window.testSecurity = testSecurity;
+//   window.validateAssetPath = validateAssetPath;
+//   window.validateModelPath = validateModelPath;
+//   window.validateVideoPath = validateVideoPath;
+//   window.validateAnimationPath = validateAnimationPath;
+// }
+
+// if (typeof window !== "undefined") {
+//   window.validateAssetPath = validateAssetPath;
+//   window.validateModelPath = validateModelPath;
+//   window.validateVideoPath = validateVideoPath;
+//   window.validateAnimationPath = validateAnimationPath;
+// }
+// 4ος
+// Core validation function - always exported first
+export function validateAssetPath(path) {
   if (!path || typeof path !== "string") return false;
 
+  // Safe window access
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+
   const allowedOrigins = [
-    window.location.origin, // e.g. https://mike-vern-pf.vercel.app
-    "http://localhost:5173", // for local dev
+    origin,
+    "http://localhost:5173",
+    "http://localhost:4173", // Vite preview
   ];
 
-  // Allow assets under these directories
   const allowedPrefixes = [
     "/textures/",
     "/objects/",
@@ -183,6 +276,9 @@ export const validateAssetPath = (path) => {
     "/animations/",
     "/models/",
     "/audios/",
+    "/fonts/",
+    "/panel_click.mp3",
+    "/tv_off.mp3",
   ];
 
   const validExtensions = [
@@ -197,36 +293,60 @@ export const validateAssetPath = (path) => {
     ".gltf",
     ".fbx",
     ".mp3",
+    ".ttf",
+    ".otf",
+    ".woff",
+    ".woff2",
   ];
 
-  const lowerPath = path.toLowerCase();
-  const fromAllowedOrigin =
-    allowedOrigins.some((origin) => path.startsWith(origin)) ||
-    path.startsWith("/");
-
-  // const hasAllowedPrefix = allowedPrefixes.some((p) => lowerPath.startsWith(p));
-  const hasAllowedPrefix =
-    allowedPrefixes.some((p) => lowerPath.startsWith(p)) ||
-    allowedPrefixes.some((p) => path.startsWith(window.location.origin + p));
-
-  const hasValidExt = validExtensions.some((ext) => lowerPath.endsWith(ext));
-
-  // Block attempts to go up directories
+  // Block directory traversal
   if (path.includes("..")) return false;
 
-  return fromAllowedOrigin && hasAllowedPrefix && hasValidExt;
-};
+  const lowerPath = path.toLowerCase();
 
-// Optional separate wrappers (for readability)
-export const validateModelPath = (path) => validateAssetPath(path);
-export const validateVideoPath = (path) => validateAssetPath(path);
-export const validateAnimationPath = (path) => validateAssetPath(path);
+  // If path includes origin, strip it for prefix checking
+  let pathToCheck = path;
+  for (const allowedOrigin of allowedOrigins) {
+    if (allowedOrigin && path.startsWith(allowedOrigin)) {
+      pathToCheck = path.substring(allowedOrigin.length);
+      break;
+    }
+  }
 
-export const testSecurity = () => {
+  const lowerPathToCheck = pathToCheck.toLowerCase();
+
+  // Check if stripped path has allowed prefix
+  const hasAllowedPrefix = allowedPrefixes.some((p) =>
+    lowerPathToCheck.startsWith(p.toLowerCase())
+  );
+
+  // Check extension
+  const hasValidExt = validExtensions.some((ext) => lowerPath.endsWith(ext));
+
+  return hasAllowedPrefix && hasValidExt;
+}
+
+// Wrapper functions - explicitly export as separate functions
+export function validateModelPath(path) {
+  return validateAssetPath(path);
+}
+
+export function validateVideoPath(path) {
+  return validateAssetPath(path);
+}
+
+export function validateAnimationPath(path) {
+  return validateAssetPath(path);
+}
+
+// Test function
+export function testSecurity() {
   const tests = [
     { path: "/textures/TexturesCompressed/SoundOn.jpg", expected: true },
     { path: "/Objects/Final/avatar.glb", expected: true },
     { path: "/videos/ReactFinal.mp4", expected: true },
+    { path: "/panel_click.mp3", expected: true },
+    { path: "/fonts/bodoni-mt-bold-italic.ttf", expected: true },
     { path: "https://evil.com/hack.glb", expected: false },
     { path: "../textures/malicious.jpg", expected: false },
   ];
@@ -236,25 +356,23 @@ export const testSecurity = () => {
 
   tests.forEach((t) => {
     const result = validateAssetPath(t.path);
-    console.log(` ${t.path} → ${result} (expected ${t.expected})`);
+    const status = result === t.expected ? "✅" : "❌";
+    console.log(`${status} ${t.path} → ${result} (expected ${t.expected})`);
     if (result !== t.expected) allPassed = false;
   });
 
-  if (allPassed) console.log("🎉 ALL SECURITY TESTS PASSED");
-  else console.warn("⚠️ Some tests failed");
-};
-
-if (process.env.NODE_ENV === "development") {
-  window.testSecurity = testSecurity;
-  window.validateAssetPath = validateAssetPath;
-  window.validateModelPath = validateModelPath;
-  window.validateVideoPath = validateVideoPath;
-  window.validateAnimationPath = validateAnimationPath;
+  if (allPassed) console.log("\n🎉 ALL SECURITY TESTS PASSED");
+  else console.warn("\n⚠️ Some tests failed");
 }
 
+// Make available globally for debugging
 if (typeof window !== "undefined") {
   window.validateAssetPath = validateAssetPath;
   window.validateModelPath = validateModelPath;
   window.validateVideoPath = validateVideoPath;
   window.validateAnimationPath = validateAnimationPath;
+
+  if (import.meta.env?.DEV) {
+    window.testSecurity = testSecurity;
+  }
 }
