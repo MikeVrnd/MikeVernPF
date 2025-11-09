@@ -90,62 +90,69 @@ export const validateVideoPath = (path) => {
 
   return allowedVideos.some((allowedPath) => path === allowedPath);
 };
-// New function specifically for 3D model paths
-export const validateModelPath = (path) => {
-  if (!path || typeof path !== "string") return false;
+
+export const validateModelPath = (inputPath) => {
+  if (!inputPath || typeof inputPath !== "string") return false;
 
   const allowedModels = [
-    `${window.location.origin}/Objects/Final/Shelves.glb`,
-    `${window.location.origin}/Objects/Final/Accountant_place_city_without_building_with_mountain_texture_with_signpost_resized_etc1s_draco_dedup_pruned_simplified_final_optimized.glb`,
-    `${window.location.origin}/Objects/Final/HouseMerged_final_optimized.glb`,
-    `${window.location.origin}/Objects/Final/Ink9.glb`,
-    `${window.location.origin}/Objects/Final/AccPlaceHalfBuildingWithoutFramesAndDegrees_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`,
-    `${window.location.origin}/Objects/Final/Tree_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`,
-    `${window.location.origin}/Objects/Final/Cup.glb`,
-    `${window.location.origin}/Objects/Final/PortraitMerged.glb`,
-    `${window.location.origin}/Objects/Final/Frames_resized_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`,
-    `${window.location.origin}/Objects/Final/DevPlaceMergedFinalWithoutFramesBetterPillowsWithoutPortrait.glb`,
-    `${window.location.origin}/Objects/Final/Degrees.glb`,
-    `${window.location.origin}/Objects/Final/Degrees.glb`,
-    `${window.location.origin}/Objects/Final/Tree_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`,
-    `${window.location.origin}/models/NextSongButton.gltf`,
-    `${window.location.origin}/Objects/Final/Building_without_tree_without_signpost_resized_etc1s_draco_dedup_pruned_simplified_final_optimized.glb`,
-    `${window.location.origin}/Objects/Final/GrassAndSkyUnmergedFinalWithoutDegreesWithoutFloorFinal_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`,
-    `${window.location.origin}/Objects/Final/JustOneBuildinig_opt_resized_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`,
-    `${window.location.origin}/Objects/Final/DoorSign.glb`,
-    `${window.location.origin}/Objects/Final/avatar.glb`,
-    `${window.location.origin}/Objects/Final/Arithmodeiktes.glb`,
-    `${window.location.origin}/Objects/Final/SkyFinalNoRoof_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`,
-    `${window.location.origin}/Objects/Final/PavementFinal6_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`,
+    "/Objects/Final/Shelves.glb",
+    "/Objects/Final/Accountant_place_city_without_building_with_mountain_texture_with_signpost_resized_etc1s_draco_dedup_pruned_simplified_final_optimized.glb",
+    "/Objects/Final/HouseMerged_final_optimized.glb",
+    "/Objects/Final/Ink9.glb",
+    "/Objects/Final/AccPlaceHalfBuildingWithoutFramesAndDegrees_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb",
+    "/Objects/Final/Tree_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb",
+    "/Objects/Final/Cup.glb",
+    "/Objects/Final/PortraitMerged.glb",
+    "/Objects/Final/Frames_resized_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb",
+    "/Objects/Final/DevPlaceMergedFinalWithoutFramesBetterPillowsWithoutPortrait.glb",
+    "/Objects/Final/Degrees.glb",
+    "/models/NextSongButton.gltf",
+    "/Objects/Final/Building_without_tree_without_signpost_resized_etc1s_draco_dedup_pruned_simplified_final_optimized.glb",
+    "/Objects/Final/GrassAndSkyUnmergedFinalWithoutDegreesWithoutFloorFinal_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb",
+    "/Objects/Final/JustOneBuildinig_opt_resized_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb",
+    "/Objects/Final/DoorSign.glb",
+    "/Objects/Final/avatar.glb",
+    "/Objects/Final/Arithmodeiktes.glb",
+    "/Objects/Final/SkyFinalNoRoof_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb",
+    "/Objects/Final/PavementFinal6_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb",
   ];
 
-  if (path.includes("..") || path.includes("//")) return false;
+  let urlObj;
+  try {
+    urlObj = new URL(inputPath, window.location.origin);
+  } catch (err) {
+    return false;
+  }
 
-  const validExtensions = [".glb", ".gltf"];
+  if (urlObj.origin !== window.location.origin) return false;
+
+  if (urlObj.pathname.includes("..")) return false;
+
+  const validExtensions = [".glb", ".gltf", ".fbx"];
   const hasValidExtension = validExtensions.some((ext) =>
-    path.toLowerCase().endsWith(ext)
+    urlObj.pathname.toLowerCase().endsWith(ext)
   );
   if (!hasValidExtension) return false;
 
-  return allowedModels.some((allowedPath) => path === allowedPath);
+  return allowedModels.includes(urlObj.pathname);
 };
 
 export const testSecurity = () => {
   const tests = [
     {
-      path: `${window.location.origin}/textures/TexturesCompressed/SoundOn.jpg`,
+      path: "/textures/TexturesCompressed/SoundOn.jpg",
       expected: true,
     },
-    { path: `${window.location.origin}/panel_click.mp3`, expected: true },
+    { path: "/panel_click.mp3", expected: true },
   ];
 
   const modelTests = [
     {
-      path: `${window.location.origin}/Objects/Final/avatar.glb`,
+      path: "/Objects/Final/avatar.glb",
       expected: true,
     },
     {
-      path: `${window.location.origin}/Objects/Final/avatar.glb`,
+      path: "/Objects/Final/avatar.glb",
       expected: true,
     },
   ];
