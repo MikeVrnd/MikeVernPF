@@ -64,8 +64,6 @@ pageGeometry.setAttribute(
 );
 
 const whiteColor = new Color("white");
-// const emissiveColor = new Color("orange");
-
 const pageMaterials = [
   new MeshStandardMaterial({
     color: whiteColor,
@@ -81,20 +79,6 @@ const pageMaterials = [
   }),
 ];
 
-// pages.forEach((page) => {
-//   useTexture.preload(`/textures/${page.front}.jpg`);
-//   useTexture.preload(`/textures/${page.back}.jpg`);
-//   useTexture.preload(`/textures/book-cover-roughness.jpg`);
-// });
-
-// const Page = ({ number, front, back, page, opened, bookClosed, ...props }) => {
-//   const [picture, picture2, pictureRoughness] = useTexture([
-//     `/textures/${front}.jpg`,
-//     `/textures/${back}.jpg`,
-//     ...(number === 0 || number === pages.length - 1
-//       ? [`/textures/book-cover-roughness.jpg`]
-//       : []),
-//   ]);
 pages.forEach((page) => {
   const frontPath = `/textures/${page.front}.jpg`;
   const backPath = `/textures/${page.back}.jpg`;
@@ -106,13 +90,11 @@ pages.forEach((page) => {
 });
 
 const Page = ({ number, front, back, page, opened, bookClosed, ...props }) => {
-  // VALIDATE PATHS BEFORE LOADING
   const frontPath = `/textures/${front}.jpg`;
   const backPath = `/textures/${back}.jpg`;
   const roughnessPath = `/textures/book-cover-roughness.jpg`;
 
   if (!validateAssetPath(frontPath) || !validateAssetPath(backPath)) {
-    console.log("Blocked unsafe texture paths", { frontPath });
     return null;
   }
 
@@ -120,7 +102,6 @@ const Page = ({ number, front, back, page, opened, bookClosed, ...props }) => {
     (number === 0 || number === pages.length - 1) &&
     !validateAssetPath(roughnessPath)
   ) {
-    console.log("Blocked unsafe roughness path", { roughnessPath });
     return null;
   }
 
@@ -288,34 +269,27 @@ export const Book_accountant = ({
   ...props
 }) => {
   const [page] = useAtom(pageAtom);
-  // Play page-flip sound only when the page actually changes after the book
-  // is already mounted (skip on initial mount when About Me opens).
   const pageAudioGuard = useRef(false);
   useEffect(() => {
-    const audioPath = "audios/page-flip-01a.mp3";
+    const audioPath = "/audios/page-flip-01a.mp3";
 
     if (!validateAssetPath(audioPath)) {
-      console.error("Blocked unsafe audio path:", audioPath);
       return;
     }
-
-    // Skip playing on initial mount/opening of the Book component
     if (!pageAudioGuard.current) {
       pageAudioGuard.current = true;
       return;
     }
 
     const audio = new Audio(audioPath);
-    audio.play().catch((err) => {
-      console.debug("page flip audio play error:", err);
-    });
+    audio.play().catch(() => {});
 
     return () => {
       try {
         audio.pause();
         audio.src = "";
       } catch (e) {
-        // ignore cleanup errors
+        console.error(e);
       }
     };
   }, [page]);

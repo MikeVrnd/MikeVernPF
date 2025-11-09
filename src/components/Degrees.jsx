@@ -2,8 +2,6 @@ import React, { useState, useEffect, forwardRef, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useSpring, animated } from "@react-spring/three";
 
-// εδώ πτυχία
-// Custom hook for Bachelor animation
 function useBachelorAnimation() {
   const [hovered, setHovered] = useState(false);
 
@@ -19,7 +17,6 @@ function useBachelorAnimation() {
   };
 }
 
-// Custom hook for Proficiency animation
 function useProficiencyAnimation() {
   const [hovered, setHovered] = useState(false);
 
@@ -35,7 +32,6 @@ function useProficiencyAnimation() {
   };
 }
 
-// Custom hook for LogisthsAtaxhs animation
 function useLogisthsAtaxhsAnimation() {
   const [hovered, setHovered] = useState(false);
 
@@ -51,7 +47,6 @@ function useLogisthsAtaxhsAnimation() {
   };
 }
 
-// Custom hook for Deutsch animation
 function useDeutschAnimation() {
   const [hovered, setHovered] = useState(false);
 
@@ -66,8 +61,6 @@ function useDeutschAnimation() {
     scale,
   };
 }
-
-// Custom hook for Master animation
 function useMasterAnimation() {
   const [hovered, setHovered] = useState(false);
 
@@ -76,7 +69,7 @@ function useMasterAnimation() {
     config: { mass: 2, tension: 300, friction: 15 },
   });
   const { position } = useSpring({
-    position: hovered ? [0, 0.2, 0] : [0, 0, 0], // Move up on hover
+    position: hovered ? [0, 0.2, 0] : [0, 0, 0],
     config: { mass: 2, tension: 300, friction: 15 },
   });
 
@@ -87,11 +80,8 @@ function useMasterAnimation() {
     position,
   };
 }
-
-// Bachelor Component
-
-const modelPath = "/Objects/Final/Degrees.glb";
-const audioPath = "/hover.mp3";
+const modelPath = `${window.location.origin}/Objects/Final/Degrees.glb`;
+const audioPath = `${window.location.origin}/hover.mp3`;
 const Bachelor = forwardRef((props, ref) => {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe model path:", modelPath);
@@ -155,7 +145,6 @@ const Bachelor = forwardRef((props, ref) => {
   );
 });
 
-// Proficiency Component
 const Proficiency = forwardRef((props, ref) => {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe model path:", modelPath);
@@ -179,12 +168,7 @@ const Proficiency = forwardRef((props, ref) => {
           <group position={[0, -0.072, 0]}>
             <animated.group
               position={[0.361, -0.005, -1.122]}
-              scale={
-                // 0.729 / scale.get(),
-                // 0.988 / scale.get(),
-                // 0.874 / scale.get(),
-                scale
-              }
+              scale={scale}
               onPointerOver={(e) => {
                 e.stopPropagation();
                 setHovered(true);
@@ -224,7 +208,6 @@ const Proficiency = forwardRef((props, ref) => {
   );
 });
 
-// LogisthsAtaxhs Component
 const LogisthsAtaxhs = forwardRef((props, ref) => {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe model path:", modelPath);
@@ -283,7 +266,6 @@ const LogisthsAtaxhs = forwardRef((props, ref) => {
   );
 });
 
-// Deutsch Component
 const Deutsch = forwardRef((props, ref) => {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe model path:", modelPath);
@@ -342,7 +324,6 @@ const Deutsch = forwardRef((props, ref) => {
   );
 });
 
-// Master Component
 const Master = forwardRef((props, ref) => {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe model path:", modelPath);

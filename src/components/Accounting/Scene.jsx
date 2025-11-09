@@ -1,13 +1,10 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import * as THREE from "three";
-import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { useThree, useLoader } from "@react-three/fiber";
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
+import { useLoader } from "@react-three/fiber";
 import { useSharedKTX2Loader } from "../../useSharedKTX2Loader";
 import { validateModelPath } from "../../utils/security";
-const modelPath =
-  "/Objects/Final/AccPlaceHalfBuildingWithoutFramesAndDegrees_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb";
+const modelPath = `${window.location.origin}/Objects/Final/AccPlaceHalfBuildingWithoutFramesAndDegrees_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`;
 
 export default function Scene({ onLoad }) {
   if (!validateModelPath(modelPath)) {

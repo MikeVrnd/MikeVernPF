@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { currentPageAtom } from "../../atoms/currentPageAtom";
 import { validateAssetPath } from "../../utils/security";
 const pictures = [
-  // "book-cover",
   "1.Περιεχόμενα_1",
   "2.Περιεχόμενα_2",
   "3.ΓειαΕίμαιΟΜιχάλης",

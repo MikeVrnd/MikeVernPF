@@ -2,7 +2,6 @@ import { useLoader, useThree, useFrame } from "@react-three/fiber";
 import { useEffect, useRef, useMemo } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { useSharedKTX2Loader } from "../../useSharedKTX2Loader";
 import { validateModelPath } from "../../utils/security";
@@ -178,8 +177,7 @@ const LODInstancedTree = ({ scene, data, position }) => {
     </group>
   );
 };
-const modelPath =
-  "/Objects/Final/Tree_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb";
+const modelPath = `${window.location.origin}/Objects/Final/Tree_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`;
 
 export default function Tree({ onLoad }) {
   if (!validateModelPath(modelPath)) {

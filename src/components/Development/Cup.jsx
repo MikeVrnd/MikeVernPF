@@ -1,4 +1,3 @@
-//3ος
 import React, { useState, useEffect, forwardRef, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useSpring, animated } from "@react-spring/three";
@@ -36,21 +35,18 @@ function useShakeAndScale() {
 }
 
 // Cup Component
-const modelPath = "/Objects/Final/Cup.glb";
+const modelPath = `${window.location.origin}/Objects/Final/Cup.glb`;
 const audioPath = "/Doink.mp3";
 const audioPathHover = "/hover.mp3";
 const Cup = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF(modelPath);
   if (!validateModelPath(modelPath)) {
-    console.error("Blocked unsafe audio path:", modelPath);
     return;
   }
   if (!validateAssetPath(audioPath)) {
-    console.error("Blocked unsafe audio path:", audioPath);
     return;
   }
   if (!validateAssetPath(audioPathHover)) {
-    console.error("Blocked unsafe audio path:", audioPathHover);
     return;
   }
   const { hovered, setHovered, scale, rotation } = useShakeAndScale();
@@ -107,15 +103,13 @@ function usePortraitAnimation() {
     return () => clearInterval(interval);
   }, [hovered]);
 
-  // Different scale values for portrait - only Y axis changes
   const { scale } = useSpring({
-    scale: hovered ? [2.5, 2.8, 2.8] : [1, 1, 1], // Only scale Y axis on hover
+    scale: hovered ? [2.5, 2.8, 2.8] : [1, 1, 1],
     config: { mass: 2, tension: 300, friction: 15 },
   });
 
-  // Position animation for hover
   const { position } = useSpring({
-    position: hovered ? [-3.5, 2.0, -3.131] : [-4.387, 1.674, -3.131], // Higher and less in x-axis on hover
+    position: hovered ? [-3.5, 2.0, -3.131] : [-4.387, 1.674, -3.131],
     config: { mass: 2, tension: 300, friction: 15 },
   });
 
@@ -133,14 +127,14 @@ function usePortraitAnimation() {
   };
 }
 
-// Portrait Component with its own animation
-const modelPathPortrait = "/Objects/Final/PortraitMerged.glb";
+// Portrait Component
+const modelPathPortrait = `${window.location.origin}/Objects/Final/PortraitMerged.glb`;
 const Portrait = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF(modelPathPortrait);
   if (!validateModelPath(modelPathPortrait)) {
     console.error("Blocked unsafe 3D model:", modelPathPortrait);
-    return null; // Don't render anything
-  } // μέχρι εδώ
+    return null;
+  }
 
   const { hovered, setHovered, scale, position, rotation } =
     usePortraitAnimation();
@@ -150,15 +144,11 @@ const Portrait = forwardRef((props, ref) => {
       <animated.group
         position={position}
         rotation={[2.099, 0.001, 1.568]}
-        scale={[0.22, 0.28, 0.22]} // Base scale remains consistent
+        scale={[0.22, 0.28, 0.22]}
         onPointerOver={(e) => {
           e.stopPropagation();
           setHovered(true);
-          // }}
-          // onPointerOut={(e) => {
-          //   e.stopPropagation();
-          //   setHovered(false);
-          // }}
+
           hoverSoundRef.current = new Audio(audioPath);
           hoverSoundRef.current.volume = 0.5;
           hoverSoundRef.current
@@ -193,8 +183,7 @@ const Portrait = forwardRef((props, ref) => {
     </group>
   );
 });
-// εδώ πτυχία
-// Custom hook for Bachelor animation
+
 function useBachelorAnimation() {
   const [hovered, setHovered] = useState(false);
 
@@ -209,7 +198,7 @@ function useBachelorAnimation() {
     scale,
   };
 }
-// Custom hook for Proficiency animation
+
 function useProficiencyAnimation() {
   const [hovered, setHovered] = useState(false);
   const { scale } = useSpring({
@@ -222,7 +211,7 @@ function useProficiencyAnimation() {
     scale,
   };
 }
-// Custom hook for LogisthsAtaxhs animation
+
 function useLogisthsAtaxhsAnimation() {
   const [hovered, setHovered] = useState(false);
   const { scale } = useSpring({
@@ -235,7 +224,7 @@ function useLogisthsAtaxhsAnimation() {
     scale,
   };
 }
-// Custom hook for Deutsch animation
+
 function useDeutschAnimation() {
   const [hovered, setHovered] = useState(false);
   const { scale } = useSpring({
@@ -249,7 +238,6 @@ function useDeutschAnimation() {
   };
 }
 
-// Custom hook for Master animation
 function useMasterAnimation() {
   const [hovered, setHovered] = useState(false);
 
@@ -258,7 +246,7 @@ function useMasterAnimation() {
     config: { mass: 2, tension: 300, friction: 15 },
   });
   const { position } = useSpring({
-    position: hovered ? [0, 0.2, 0] : [0, 0, 0], // Move up on hover
+    position: hovered ? [0, 0.2, 0] : [0, 0, 0],
     config: { mass: 2, tension: 300, friction: 15 },
   });
 
@@ -270,14 +258,13 @@ function useMasterAnimation() {
   };
 }
 
-// Bachelor Component
-const modelPathDegrees = "/Objects/Final/Degrees.glb";
+const modelPathDegrees = `${window.location.origin}/Objects/Final/Degrees.glb`;
 const Bachelor = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF(modelPathDegrees);
   if (!validateModelPath(modelPathDegrees)) {
     console.error("Blocked unsafe 3D model:", modelPathDegrees);
-    return null; // Don't render anything
-  } // μέχρι εδώ
+    return null;
+  }
 
   const { hovered, setHovered, scale } = useBachelorAnimation();
   const { playRemoteSound } = props;
@@ -298,7 +285,7 @@ const Bachelor = forwardRef((props, ref) => {
               onPointerOver={(e) => {
                 e.stopPropagation();
                 setHovered(true);
-                // Play sound on hover
+
                 hoverSoundRef.current = new Audio(audioPathHover);
                 hoverSoundRef.current.volume = 0.5;
                 hoverSoundRef.current
@@ -309,7 +296,6 @@ const Bachelor = forwardRef((props, ref) => {
                 e.stopPropagation();
                 setHovered(false);
 
-                // Stop sound on hover out
                 if (hoverSoundRef.current) {
                   hoverSoundRef.current.pause();
                   hoverSoundRef.current.currentTime = 0;
@@ -337,14 +323,12 @@ const Bachelor = forwardRef((props, ref) => {
   );
 });
 
-// Proficiency Component
-
 const Proficiency = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF(modelPathDegrees);
   if (!validateModelPath(modelPathDegrees)) {
     console.error("Blocked unsafe 3D model:", modelPathDegrees);
-    return null; // Don't render anything
-  } // μέχρι εδώ
+    return null;
+  }
 
   const { hovered, setHovered, scale } = useProficiencyAnimation();
   const hoverSoundRef = useRef(null);
@@ -363,7 +347,7 @@ const Proficiency = forwardRef((props, ref) => {
               onPointerOver={(e) => {
                 e.stopPropagation();
                 setHovered(true);
-                // Play sound on hover
+
                 hoverSoundRef.current = new Audio(audioPathHover);
                 hoverSoundRef.current.volume = 0.5;
                 hoverSoundRef.current
@@ -374,7 +358,6 @@ const Proficiency = forwardRef((props, ref) => {
                 e.stopPropagation();
                 setHovered(false);
 
-                // Stop sound on hover out
                 if (hoverSoundRef.current) {
                   hoverSoundRef.current.pause();
                   hoverSoundRef.current.currentTime = 0;
@@ -402,13 +385,12 @@ const Proficiency = forwardRef((props, ref) => {
   );
 });
 
-// LogisthsAtaxhs Component
 const LogisthsAtaxhs = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF(modelPathDegrees);
   if (!validateModelPath(modelPathDegrees)) {
     console.error("Blocked unsafe 3D model:", modelPathDegrees);
-    return null; // Don't render anything
-  } // μέχρι εδώ
+    return null;
+  }
 
   const { hovered, setHovered, scale } = useLogisthsAtaxhsAnimation();
   const hoverSoundRef = useRef(null);
@@ -458,13 +440,12 @@ const LogisthsAtaxhs = forwardRef((props, ref) => {
   );
 });
 
-// Deutsch Component
 const Deutsch = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF(modelPathDegrees);
   if (!validateModelPath(modelPathDegrees)) {
     console.error("Blocked unsafe 3D model:", modelPathDegrees);
-    return null; // Don't render anything
-  } // μέχρι εδώ
+    return null;
+  }
   const { hovered, setHovered, scale } = useDeutschAnimation();
   const hoverSoundRef = useRef(null);
   return (
@@ -513,13 +494,12 @@ const Deutsch = forwardRef((props, ref) => {
   );
 });
 
-// Master Component
 const Master = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF(modelPathDegrees);
   if (!validateModelPath(modelPathDegrees)) {
     console.error("Blocked unsafe 3D model:", modelPathDegrees);
-    return null; // Don't render anything
-  } // μέχρι εδώ
+    return null;
+  }
   const { hovered, setHovered, scale } = useMasterAnimation();
   const hoverSoundRef = useRef(null);
   return (
@@ -543,7 +523,7 @@ const Master = forwardRef((props, ref) => {
           onPointerOut={(e) => {
             e.stopPropagation();
             setHovered(false);
-            // Stop sound on hover out
+
             if (hoverSoundRef.current) {
               hoverSoundRef.current.pause();
               hoverSoundRef.current.currentTime = 0;
@@ -565,7 +545,7 @@ const Master = forwardRef((props, ref) => {
     </group>
   );
 });
-// Preload model
+
 export {
   Cup,
   Portrait,
@@ -575,7 +555,7 @@ export {
   Deutsch,
   Master,
 };
-// Preload both Objects/Final
+
 useGLTF.preload(modelPath);
 useGLTF.preload(modelPathPortrait);
 useGLTF.preload(modelPathDegrees);

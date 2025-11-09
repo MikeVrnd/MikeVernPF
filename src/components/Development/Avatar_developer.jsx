@@ -9,11 +9,11 @@ import {
 } from "@react-three/postprocessing";
 
 export default function Avatar_developer(props) {
-  const { scene } = useGLTF("Objects/Final/avatar.glb");
+  const { scene } = useGLTF("/Objects/Final/avatar.glb");
   const group = useRef();
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
-  const { animations: walkingAnim } = useFBX("animations/Typing.fbx");
+  const { animations: walkingAnim } = useFBX("/animations/Typing.fbx");
   walkingAnim[0].name = "WalkingMike";
   const { actions } = useAnimations(walkingAnim, group);
 

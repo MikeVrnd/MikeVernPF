@@ -9,13 +9,11 @@ export default function NightSoundscape({ isActive, isMuted, onRemoteSound }) {
     : null;
   useEffect(() => {
     if (!safeAudioPath) {
-      console.error("Blocked unsafe audio path");
       return;
     }
     const ambientAudio = new Audio();
     ambientAudio.preload = "auto";
     ambientAudio.addEventListener("canplaythrough", () => {
-      console.log("Night ambient audio loaded successfully");
       isLoadedRef.current = true;
     });
     ambientAudio.addEventListener("error", (e) => {

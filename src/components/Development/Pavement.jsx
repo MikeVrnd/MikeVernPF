@@ -6,14 +6,12 @@ import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.j
 import { useSharedKTX2Loader } from "../../useSharedKTX2Loader";
 import { validateModelPath } from "../../utils/security";
 
-const modelPath =
-  "/Objects/Final/PavementFinal6_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb";
+const modelPath = `${window.location.origin}/Objects/Final/PavementFinal6_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`;
 export default function Pavement({ onLoad }) {
-  // πρόσθεσα αυτό
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe 3D model:", modelPath);
     return null;
-  } // μέχρι εδώ
+  }
   const ktx2Loader = useSharedKTX2Loader();
   const { nodes, materials, animations, scene } = useLoader(
     GLTFLoader,
@@ -33,14 +31,12 @@ export default function Pavement({ onLoad }) {
 export function preloadAccPlaceKtx2Model(gl) {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe preload:", modelPath);
-    return; // Don't preload
+    return;
   }
   const loader = new GLTFLoader();
   const ktx2Loader = new KTX2Loader()
     .setTranscoderPath("/basis/")
     .detectSupport(gl);
   loader.setKTX2Loader(ktx2Loader);
-  loader.load(modelPath, () => {
-    console.log("✅ Model preloaded.");
-  });
+  loader.load(modelPath, () => {});
 }

@@ -54,7 +54,6 @@ const FloatingTexts = () => {
           />
         </Text>
       ))}
-      {/* Glowing Frame */}
       <mesh
         scale={[0.55, 0.7, 1]}
         position={[5.501, 1.98, -0.05]}
@@ -68,7 +67,6 @@ const FloatingTexts = () => {
           toneMapped={false}
         />
       </mesh>
-      {/* Frame Glow Effect */}
       <mesh
         scale={[0.5, 0.65, 1]}
         position={[5.501, 1.98, -0.03]}

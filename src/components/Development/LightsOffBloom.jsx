@@ -1,4 +1,3 @@
-// 2ος
 import { useEffect, useRef, useState } from "react";
 import HoverMesh from "./TheYoungerMe";
 import { Html } from "@react-three/drei";
@@ -65,7 +64,7 @@ export default function LightsOffBloom() {
       const interval = setInterval(() => {
         if (!lightOn && !hovered) {
           setShake(true);
-          setTimeout(() => setShake(false), 500); // Shake duration
+          setTimeout(() => setShake(false), 500);
         }
       }, 2000);
       return () => clearInterval(interval);

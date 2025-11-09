@@ -6,7 +6,7 @@ import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.j
 import { useSharedKTX2Loader } from "../../useSharedKTX2Loader";
 import { validateModelPath } from "../../utils/security";
 
-const modelPath = "/Objects/Final/HouseMerged_final_optimized.glb";
+const modelPath = `${window.location.origin}/Objects/Final/HouseMerged_final_optimized.glb`;
 export default function DevPlaceKtx2({ onLoad }) {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe model path:", modelPath);

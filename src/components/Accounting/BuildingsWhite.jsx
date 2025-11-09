@@ -1,14 +1,11 @@
-// 4ος
 import React, { useRef, useEffect } from "react";
-import { useGLTF, useAnimations } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
-import Scene from "./Scene";
-import { useThree, useLoader } from "@react-three/fiber";
+import { useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useSharedKTX2Loader } from "../../useSharedKTX2Loader";
 import { validateModelPath } from "../../utils/security";
-// Register the KTX2 loader
 THREE.DefaultLoadingManager.addHandler(
   /\.ktx2$/,
   new KTX2Loader()
@@ -85,7 +82,6 @@ const BuildingMiddleSingle = Array.from({ length: 2 }, (_, i) => ({
   scale: [8.7, 22.5, 13.97],
 }));
 
-// --- Generic Instanced Mesh Group ---
 const InstancedMeshGroup = ({ data, geometry, material }) => {
   const meshRef = useRef();
 
@@ -207,16 +203,15 @@ const InstancedSingle = ({ nodes, materials }) => {
     </>
   );
 };
-// --- Main Scene Component ---
-const modelPath =
-  "Objects/Final/JustOneBuildinig_opt_resized_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb";
+
+const modelPath = `${window.location.origin}/Objects/Final/JustOneBuildinig_opt_resized_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`;
 export default function BuildingsWhite(props) {
   const group = useRef();
-  // πρόσθεσα αυτό
+
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe 3D model:", modelPath);
     return null;
-  } // μέχρι εδώ
+  }
 
   const ktx2Loader = useSharedKTX2Loader();
   const { nodes, materials } = useLoader(GLTFLoader, modelPath, (loader) => {

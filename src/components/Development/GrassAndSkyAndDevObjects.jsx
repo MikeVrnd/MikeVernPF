@@ -6,14 +6,12 @@ import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.j
 import { useSharedKTX2Loader } from "../../useSharedKTX2Loader";
 import { validateModelPath } from "../../utils/security";
 
-const modelPath =
-  "/Objects/Final/GrassAndSkyUnmergedFinalWithoutDegreesWithoutFloorFinal_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb";
+const modelPath = `${window.location.origin}/Objects/Final/GrassAndSkyUnmergedFinalWithoutDegreesWithoutFloorFinal_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`;
 export default function DevPlaceKtx2({ onLoad }) {
-  // πρόσθεσα αυτό
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe 3D model:", modelPath);
     return null;
-  } // μέχρι εδώ
+  }
   const ktx2Loader = useSharedKTX2Loader();
   const { nodes, materials, animations, scene } = useLoader(
     GLTFLoader,
@@ -33,11 +31,10 @@ export default function DevPlaceKtx2({ onLoad }) {
   return <primitive object={scene} />;
 }
 
-// ✅ Manual Preload Function
 export function preloadAccPlaceKtx2Model(gl) {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe preload:", modelPath);
-    return; // Don't preload
+    return;
   }
   const loader = new GLTFLoader();
   const ktx2Loader = new KTX2Loader()

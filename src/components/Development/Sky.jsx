@@ -6,46 +6,16 @@ import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.j
 import { useSharedKTX2Loader } from "../../useSharedKTX2Loader";
 import { validateModelPath } from "../../utils/security";
 
-const modelPath =
-  "/Objects/Final/SkyFinalNoRoof_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb";
+const modelPath = `${window.location.origin}/Objects/Final/SkyFinalNoRoof_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`;
 export default function Sky({ onLoad }) {
-  //   const ktx2Loader = useSharedKTX2Loader();
-  //   const { nodes, materials, animations, scene } = useLoader(
-  //     GLTFLoader,
-  //     "/Objects/Final/SkyFinalNoRoof_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb",
-  //     (loader) => {
-  //       loader.setKTX2Loader(ktx2Loader);
-  //       loader.setMeshoptDecoder(MeshoptDecoder);
-  //     }
-  //   );
-  //   useEffect(() => {
-  //     if (onLoad) {
-  //       onLoad({ nodes, materials, animations });
-  //     }
-  //   }, [nodes, materials, animations, onLoad]);
-
-  //   return <primitive object={scene} />;
-  // }
-  // export function preloadDevPlaceKtx2Model(gl) {
-  //   const loader = new GLTFLoader();
-  //   const ktx2Loader = new KTX2Loader()
-  //     .setTranscoderPath("/basis/")
-  //     .detectSupport(gl);
-  //   loader.setKTX2Loader(ktx2Loader);
-  //   loader.load(
-  //     "/Objects/Final/SkyFinalNoRoof_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb",
-  //     () => {}
-  //   );
-  // }
-  // πρόσθεσα αυτό
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe 3D model:", modelPath);
     return null;
-  } // μέχρι εδώ
-  const ktx2Loader = useSharedKTX2Loader(); // Use shared loader
+  }
+  const ktx2Loader = useSharedKTX2Loader();
   const { nodes, materials, animations, scene } = useLoader(
     GLTFLoader,
-    modelPath, // και αυτό πρόσθεσα
+    modelPath,
     (loader) => {
       loader.setKTX2Loader(ktx2Loader);
       loader.setMeshoptDecoder(MeshoptDecoder);
@@ -58,12 +28,11 @@ export default function Sky({ onLoad }) {
   }, [nodes, materials, animations, onLoad]);
   return <primitive object={scene} />;
 }
-// ✅ Manual Preload Function
 
 export function preloadAccPlaceKtx2Model(gl) {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe preload:", modelPath);
-    return; // Don't preload
+    return;
   }
   const loader = new GLTFLoader();
   const ktx2Loader = new KTX2Loader()
@@ -72,7 +41,5 @@ export function preloadAccPlaceKtx2Model(gl) {
 
   loader.setKTX2Loader(ktx2Loader);
 
-  loader.load(modelPath, () => {
-    console.log("✅ Model preloaded.");
-  });
+  loader.load(modelPath, () => {});
 }

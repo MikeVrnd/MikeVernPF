@@ -9,14 +9,11 @@ export default function DaySoundscape({ isActive, isMuted, onRemoteSound }) {
     : null;
   useEffect(() => {
     if (!safeAudioPath) {
-      console.error("Blocked unsafe audio path");
       return;
     }
-    // Initialize ambient sound (day ambience - birds, breeze, etc.)
     ambientSoundRef.current = new Audio(safeAudioPath);
     ambientSoundRef.current.loop = true;
     ambientSoundRef.current.volume = 0.3;
-    // Initialize remote sound (TV click sound)
     remoteSoundRef.current = new Audio(safeAudioPath);
     remoteSoundRef.current.volume = 0.5;
 
@@ -43,7 +40,7 @@ export default function DaySoundscape({ isActive, isMuted, onRemoteSound }) {
       ambientSoundRef.current.pause();
     }
   }, [isActive, isMuted]);
-  // Expose remote sound trigger
+
   useEffect(() => {
     if (onRemoteSound) {
       onRemoteSound((shouldPlay) => {

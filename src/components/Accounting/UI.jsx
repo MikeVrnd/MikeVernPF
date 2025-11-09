@@ -39,12 +39,8 @@ for (let i = 1; i < pictures.length; i += 2) {
 export const UI = () => {
   const [page, setPage] = useAtom(pageAtom);
 
-  // useEffect(() => {
-  //   const audio = new Audio("/audios/page-flip-01a.mp3");
-  //   audio.play();
-  // }, [page]);
   useEffect(() => {
-    const audioPath = "audios/page-flip-01a.mp3";
+    const audioPath = "/audios/page-flip-01a.mp3";
     if (!validateAssetPath(audioPath)) {
       console.error("Blocked unsafe audio path:", audioPath);
       return;

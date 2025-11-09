@@ -2,12 +2,12 @@ import React from "react";
 import { useGLTF } from "@react-three/drei";
 import { validateModelPath } from "../../utils/security";
 
-const modelPath = "/Objects/Final/DoorSign.glb";
+const modelPath = `${window.location.origin}/Objects/Final/DoorSign.glb`;
 export default function DoorSign(props) {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe 3D model:", modelPath);
-    return null; // Don't render anything
-  } // μέχρι εδώ
+    return null;
+  }
 
   const { nodes, materials } = useGLTF(modelPath);
   return (

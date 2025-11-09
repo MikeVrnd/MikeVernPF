@@ -1,4 +1,3 @@
-// OPTIMIZATION: Lazy load heavy components
 import React, { Suspense, useRef, useState, useEffect, lazy } from "react";
 import PropTypes from "prop-types";
 import { Canvas, extend } from "@react-three/fiber";
@@ -10,11 +9,9 @@ import {
 } from "@react-three/postprocessing";
 import * as THREE from "three";
 
-// Extend THREE components for use in JSX
 extend({ Group: THREE.Group });
 import "./app.css";
 
-// OPTIMIZATION: Lazy load scene components with preloading
 const accountingScenePromise = import(
   "./components/Accounting/Avatar_acc_place"
 );
@@ -25,14 +22,12 @@ const developerScenePromise = import(
 const Avatar_acc_place = lazy(() => accountingScenePromise);
 const Avatar_dev_place = lazy(() => developerScenePromise);
 
-// Preload developer scene immediately as it's shown first
 developerScenePromise.then(() => console.log("Developer scene preloaded"));
 
 import NightSoundscape from "./components/Development/NightSoundscape";
 import DaySoundscape from "./components/Accounting/DaySoundscape";
 import { validateAssetPath } from "./utils/security";
 
-// OPTIMIZATION: Memoized SceneWrapper component to prevent unnecessary re-renders
 const SceneWrapper = React.memo(({ children, isActive, onUnload }) => {
   const [shouldRender, setShouldRender] = useState(isActive);
 
@@ -60,15 +55,11 @@ const SceneWrapper = React.memo(({ children, isActive, onUnload }) => {
   return children;
 });
 
-// Loading overlay that notifies parent when active
 function LoadingFallback({ onLoadingChange }) {
   const { progress } = useProgress();
   useEffect(() => {
-    // Notify parent that loading started
     onLoadingChange?.(true);
-
     return () => {
-      // Notify parent that loading finished
       onLoadingChange?.(false);
     };
   }, [onLoadingChange]);
@@ -105,7 +96,7 @@ function LoadingFallback({ onLoadingChange }) {
 }
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true); // Start as loading
+  const [isLoading, setIsLoading] = useState(true);
   const [isDay, setIsDay] = useState(true);
   const [showToggleButton, setShowToggleButton] = useState(true);
   const [isMobile] = useState(window.innerWidth < 768);
@@ -124,13 +115,10 @@ function App() {
   const [isSoundMuted, setIsSoundMuted] = useState(true);
   const nightRemoteSoundRef = useRef(null);
   const dayRemoteSoundRef = useRef(null);
-
-  // Callback for LoadingFallback to notify loading state
   const handleLoadingChange = (loading) => {
     setIsLoading(loading);
   };
 
-  // Memory monitoring
   useEffect(() => {
     const logMemory = () => {
       if (performance.memory) {
@@ -162,15 +150,12 @@ function App() {
     }
   };
 
-  // Preload the opposite scene
   const preloadOppositeScene = () => {
     if (isDay) {
-      // Preload night scene
       developerScenePromise.then(() =>
         console.log("Developer scene preloaded on hover")
       );
     } else {
-      // Preload day scene
       accountingScenePromise.then(() =>
         console.log("Accounting scene preloaded on hover")
       );

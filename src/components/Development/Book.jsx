@@ -21,11 +21,11 @@ import { pageAtom, pages } from "./UI";
 import React, { forwardRef } from "react";
 import { validateAssetPath } from "../../utils/security";
 
-const easingFactor = 0.5; // Controls the speed of the easing
-const easingFactorFold = 0.3; // Controls the speed of the easing
-const insideCurveStrength = 0.18; // Controls the strength of the curve
-const outsideCurveStrength = 0.01; // Controls the strength of the curve
-const turningCurveStrength = 0.09; // Controls the strength of the curve
+const easingFactor = 0.5;
+const easingFactorFold = 0.3;
+const insideCurveStrength = 0.18;
+const outsideCurveStrength = 0.01;
+const turningCurveStrength = 0.09;
 
 const PAGE_WIDTH = 1.14;
 const PAGE_HEIGHT = 1.71;
@@ -49,7 +49,6 @@ const skinIndexes = [];
 const skinWeights = [];
 
 for (let i = 0; i < position.count; i++) {
-  // ALL VERTICES
   vertex.fromBufferAttribute(position, i);
   const x = vertex.x;
 
@@ -70,8 +69,6 @@ pageGeometry.setAttribute(
 );
 
 const whiteColor = new Color("white");
-// const emissiveColor = new Color("orange");
-
 const pageMaterials = [
   new MeshStandardMaterial({
     color: whiteColor,
@@ -87,20 +84,6 @@ const pageMaterials = [
   }),
 ];
 
-// pages.forEach((page) => {
-//   useTexture.preload(`/textures/${page.front}.jpg`);
-//   useTexture.preload(`/textures/${page.back}.jpg`);
-//   useTexture.preload(`/textures/book-cover-roughness.jpg`);
-// });
-
-// const Page = ({ number, front, back, page, opened, bookClosed, ...props }) => {
-//   const [picture, picture2, pictureRoughness] = useTexture([
-//     `/textures/${front}.jpg`,
-//     `/textures/${back}.jpg`,
-//     ...(number === 0 || number === pages.length - 1
-//       ? [`/textures/book-cover-roughness.jpg`]
-//       : []),
-//   ]);
 pages.forEach((page) => {
   const frontPath = `/textures/${page.front}.jpg`;
   const backPath = `/textures/${page.back}.jpg`;
@@ -112,7 +95,6 @@ pages.forEach((page) => {
 });
 
 const Page = ({ number, front, back, page, opened, bookClosed, ...props }) => {
-  // VALIDATE PATHS BEFORE LOADING
   const frontPath = `/textures/${front}.jpg`;
   const backPath = `/textures/${back}.jpg`;
   const roughnessPath = `/textures/book-cover-roughness.jpg`;
@@ -130,7 +112,6 @@ const Page = ({ number, front, back, page, opened, bookClosed, ...props }) => {
     return null;
   }
 
-  // KEEP ORIGINAL CODE
   const [picture, picture2, pictureRoughness] = useTexture([
     `/textures/${front}.jpg`,
     `/textures/${back}.jpg`,
@@ -320,36 +301,27 @@ export const Book = forwardRef(
     ref
   ) => {
     const [page] = useAtom(pageAtom);
-    // Play page-flip sound only when the page actually changes after the book
-    // is already mounted (i.e. skip the initial mount when About Me opens).
     const pageAudioGuard = useRef(false);
     useEffect(() => {
-      const audioPath = "audios/page-flip-01a.mp3";
+      const audioPath = "/audios/page-flip-01a.mp3";
 
       if (!validateAssetPath(audioPath)) {
         console.error("Blocked unsafe audio path:", audioPath);
         return;
       }
-
-      // Skip playing on initial mount/opening of the Book component
       if (!pageAudioGuard.current) {
         pageAudioGuard.current = true;
         return;
       }
 
       const audio = new Audio(audioPath);
-      audio.play().catch((err) => {
-        // Silently handle play errors (autoplay restrictions, etc.)
-        console.debug("page flip audio play error:", err);
-      });
-
-      // Cleanup: stop audio if component unmounts soon after
+      audio.play().catch((err) => {});
       return () => {
         try {
           audio.pause();
           audio.src = "";
         } catch (e) {
-          /* ignore */
+          console.debug("page flip audio play error:", e);
         }
       };
     }, [page]);

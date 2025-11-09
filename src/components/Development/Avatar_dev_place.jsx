@@ -1,30 +1,13 @@
-// 1ος κώδικας
 import React, { Suspense, useEffect, useRef, useState, lazy } from "react";
 import { useGraph } from "@react-three/fiber";
-import {
-  Html,
-  Ktx2,
-  Loader,
-  MeshReflectorMaterial,
-  MeshWobbleMaterial,
-  useAnimations,
-  useCursor,
-  useFBX,
-  useGLTF,
-} from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
-import {
-  Bloom,
-  EffectComposer,
-  ToneMapping,
-} from "@react-three/postprocessing";
 import { Text } from "@react-three/drei";
 import Scene from "./Scene";
 import CameraControlsImpl from "camera-controls";
 import { CameraControls } from "@react-three/drei";
 import * as THREE from "three";
 CameraControlsImpl.install({ THREE });
-// OPTIMIZATION: lazy-load the Book component to reduce initial bundle size
 const Book = lazy(() =>
   import("./Book").then((mod) => ({ default: mod.Book }))
 );
@@ -47,16 +30,10 @@ import {
 import ExitButtonStars from "./ExitButtonStars";
 import StreetLamps from "./StreetLamps";
 import GrassAndSkyAndDevObjects from "./GrassAndSkyAndDevObjects";
-import TreeClicked from "./Trees&Flowers/TreeClicked";
 import Tree from "./Trees&Flowers/Tree";
-import TreeMiddle from "./Trees&Flowers/TreeMiddle";
-import Grass from "./Trees&Flowers/Grass";
-import Rose from "./Trees&Flowers/Rose";
-import Violet from "./Trees&Flowers/Violet";
 import Sky from "./Sky";
-import { useThree, useFrame } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import DoorSign from "./DoorSign";
-import { useSpring, animated } from "@react-spring/three";
 import { validateModelPath, validateAssetPath } from "../../utils/security";
 
 export default function Avatar_dev_place({
@@ -65,8 +42,8 @@ export default function Avatar_dev_place({
   setShowToggleButton,
 }) {
   const hoverSoundRef = useRef(null);
-  const cameraControlsRef = useRef(); // const meshRefAboutMe = useRef();
-  const meshRefInitial = useRef(); // const meshRefSide = useRef();
+  const cameraControlsRef = useRef();
+  const meshRefInitial = useRef();
   const [showHouse, setShowHouse] = useState(false);
   const meshRef = useRef();
   const [lightOnWisdomNook, setLightOnWisdomNook] = useState(false);
@@ -79,9 +56,6 @@ export default function Avatar_dev_place({
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const performanceMode = isVideoPlaying;
   const [hideObjects, setHideObjects] = useState(true);
-  // const [highlighted, setHighlighted] = useState(false);
-  // useCursor(highlighted);
-
   const safeAudioPath = validateAssetPath("/panel_click.mp3")
     ? "/panel_click.mp3"
     : null;
@@ -116,7 +90,6 @@ export default function Avatar_dev_place({
     setShowHouse(true);
     setShowToggleButton(false);
     setHideObjects(false);
-    // setShowLights(true);
     if (meshRef.current && cameraControlsRef.current) {
       const meshWorldPosition = new THREE.Vector3();
       meshRef.current.getWorldPosition(meshWorldPosition);
@@ -205,9 +178,9 @@ export default function Avatar_dev_place({
   {
     /* μέχρι εδώ η επικάλυψη του βιβλίου */
   }
-  const [showBook, setShowBook] = useState(false); //Βιβλίο με σελίδες
+  const [showBook, setShowBook] = useState(false);
   const handleClickAboutMe = () => {
-    setShowToggleButton(false); // για εμφάνιση button μέρα/νύχτα
+    setShowToggleButton(false);
     if (cameraControlsRef.current) {
       const targetPosition = new THREE.Vector3(0, 0.5, -3.5);
       const lookAtTarget = new THREE.Vector3(0, -1.5, -2.4);
@@ -326,7 +299,7 @@ export default function Avatar_dev_place({
     setShowToggleButton(true); // για απόκρυψη button μέρα/νύχτα
     setIsVideoPlaying(false);
     setFrameLoopMode("always");
-    // setShowLights(true);
+
     if (safeAudioTVPath) {
       const clickSound = new Audio(safeAudioTVPath);
       clickSound.volume = 0.5;
@@ -412,15 +385,15 @@ export default function Avatar_dev_place({
     cameraControlsRef.current.dollySpeed = 1;
 
     if (cameraControlsRef.current && prevMaxPolarAngle !== null) {
-      cameraControlsRef.current.maxPolarAngle = prevMaxPolarAngle; // Restore previous value
-      setPrevMaxPolarAngle(null); // Reset state
+      cameraControlsRef.current.maxPolarAngle = prevMaxPolarAngle;
+      setPrevMaxPolarAngle(null);
     }
-    cameraControlsRef.current.minPolarAngle = Math.PI / 2.8; // Adjust as needed
+    cameraControlsRef.current.minPolarAngle = Math.PI / 2.8;
     cameraControlsRef.current.maxPolarAngle = Math.PI / 2.05;
     setLightOnWisdomNook(false);
     setShowTVMenu(false);
     setShowFakeBook(true);
-    setShowBook(false); // Πραγματικό βιβλίο με σελίδες
+    setShowBook(false);
     setShowRemote(false);
     setLightOnNavigationGuide(false);
     cameraControlsRef.current.dollyToCursor = false;
@@ -433,10 +406,10 @@ export default function Avatar_dev_place({
     }
   };
   const handleClickSide = () => {
-    setShowToggleButton(false); // για εμφάνιση button μέρα/νύχτα
+    setShowToggleButton(false);
     setIsVideoPlaying(true);
     setFrameLoopMode("demand");
-    // setShowLights(true);
+
     if (cameraControlsRef.current) {
       const meshPosition = new THREE.Vector3(3.9, -0.4, -2.8);
       const cameraOffset = new THREE.Vector3(-5, 0.3, 0);
@@ -510,7 +483,7 @@ export default function Avatar_dev_place({
       clickSound.play().catch((err) => console.log("Sound play error:", err));
     }
   };
-  // const texture = useTexture("/textures/book-cover.jpg"); // αφορά επικάλυψη του βιβλίου
+
   const textureUrl =
     "/textures/TexturesCompressed/Developer/TV_remote_final7.jpg";
   const textureUrlSign =
@@ -521,27 +494,27 @@ export default function Avatar_dev_place({
   }
   const textureremote = useTexture(textureUrl);
   const materials = [
-    new THREE.MeshStandardMaterial({ color: "black" }), // right
-    new THREE.MeshStandardMaterial({ color: "black" }), // left
+    new THREE.MeshStandardMaterial({ color: "black" }),
+    new THREE.MeshStandardMaterial({ color: "black" }),
     new THREE.MeshStandardMaterial({ map: textureremote, transparent: true }),
-    new THREE.MeshStandardMaterial({ color: "black" }), // top
-    new THREE.MeshStandardMaterial({ color: "black" }), // bottom
-    new THREE.MeshStandardMaterial({ color: "black" }), // back
+    new THREE.MeshStandardMaterial({ color: "black" }),
+    new THREE.MeshStandardMaterial({ color: "black" }),
+    new THREE.MeshStandardMaterial({ color: "black" }),
   ];
   const textureremotesign = useTexture(textureUrlSign);
   const materialsign = [
-    new THREE.MeshStandardMaterial({ color: "black" }), // right
-    new THREE.MeshStandardMaterial({ color: "black" }), // left
+    new THREE.MeshStandardMaterial({ color: "black" }),
+    new THREE.MeshStandardMaterial({ color: "black" }),
     new THREE.MeshStandardMaterial({
       map: textureremotesign,
       transparent: true,
     }),
-    new THREE.MeshStandardMaterial({ color: "black" }), // top
-    new THREE.MeshStandardMaterial({ color: "black" }), // bottom
-    new THREE.MeshStandardMaterial({ color: "black" }), // back
+    new THREE.MeshStandardMaterial({ color: "black" }),
+    new THREE.MeshStandardMaterial({ color: "black" }),
+    new THREE.MeshStandardMaterial({ color: "black" }),
   ];
   const group = useRef();
-  const modelPath = "Objects/Final/avatar.glb";
+  const modelPath = `${window.location.origin}/Objects/Final/avatar.glb`;
   const texturePath = "/textures/book-cover.jpg";
 
   if (!validateModelPath(modelPath)) {
@@ -610,10 +583,10 @@ export default function Avatar_dev_place({
         <mesh
           ref={cubeRef}
           position={[-1.18, 0.5532, -2.38]}
-          visible={showFakeBook} // 👈 visibility toggle
+          visible={showFakeBook}
           rotation={[0, Math.PI / 2, Math.PI / 2]}
         >
-          <boxGeometry args={[0.01, 0.48, 0.32]} /> {/* Width, Height */}
+          <boxGeometry args={[0.01, 0.48, 0.32]} />
           <meshBasicMaterial map={texture} />
         </mesh>
         {/* μέχρι εδώ η επικάλυψη του βιβλίου */}
@@ -634,13 +607,12 @@ export default function Avatar_dev_place({
           rotation={[-Math.PI / 2, 0, 0]}
           width={1.5}
           height={2}
-          intensity={lightOnWisdomNook ? 1.68 : 0} // Turns light on/off
+          intensity={lightOnWisdomNook ? 1.68 : 0}
           color={"White"}
         />
         {/* μέχρι εδώ πρόσθετο φως για wisdom nook*/}
         {/* από εδώ πρόσθετο φως για ταμπέλα στην πόρτα*/}
         <mesh
-          // ref={cubeRef}
           position={[-7.22, 2.08, 1.63]}
           visible={hideObjects ? true : false}
           rotation={[Math.PI / 2, 0, 0]}
@@ -670,13 +642,13 @@ export default function Avatar_dev_place({
           rotation={[0, Math.PI, Math.PI / 2]}
           width={1.5}
           height={2}
-          intensity={lightOnNavigationGuide ? 5.68 : 0} // Turns light on/off
+          intensity={lightOnNavigationGuide ? 5.68 : 0}
           color={"White"}
         />
         {/* μέχρι εδώ πρόσθετο φως για Navigation Guide*/}
         {/* Μέχρι εδώ το έχω σαν Lamp που φωτίζει το βιβλίο */}
         {"Προσθέτω reflection στο πάτωμα "}
-        {/* (validateAssetPath(fontPath) && */}
+
         <Text
           font={fontPath}
           position={[23.62, 5.15, 27.54]}
@@ -702,7 +674,7 @@ export default function Avatar_dev_place({
           Guide
         </Text>
         <Text
-          font={fontPath} // position={[2.6, 1.7, -4.8]}
+          font={fontPath}
           position={[6.69, 0.1, -8.4208]}
           textAlign="center"
           scale={0.059}
@@ -744,7 +716,6 @@ export default function Avatar_dev_place({
         {/* Παρακάτω το button για το about me */}
         <Text
           font={fontPath}
-          // position={[6.78, 1.84, 3.987]}
           position={[23.62, 2.64, 27.54]}
           textAlign="center"
           scale={0.28}
@@ -808,7 +779,7 @@ export default function Avatar_dev_place({
         <mesh
           position={[2.42, 0.8, -2.85]}
           rotation={[-Math.PI / 2, -Math.PI / 8, -Math.PI / 2]}
-          visible={false} // 👈 visibility toggle
+          visible={false}
           onClick={handleExitProjects}
           onPointerOver={() => (document.body.style.cursor = "pointer")}
           onPointerOut={() => (document.body.style.cursor = "default")}
@@ -820,7 +791,6 @@ export default function Avatar_dev_place({
         {/* Παρακάτω το button για τα Projects */}
         <Text
           font={fontPath}
-          // position={[6.78, 1.195, 3.987]}
           position={[23.62, 1.77, 27.54]}
           textAlign="center"
           scale={0.28}
@@ -857,7 +827,6 @@ export default function Avatar_dev_place({
         </Text>
         <Text
           font={fontPath}
-          // position={[6.78, 0.627, 3.987]}
           position={[23.58, 0.68, 27.54]}
           textAlign="center"
           scale={0.1}
@@ -879,7 +848,7 @@ export default function Avatar_dev_place({
         <mesh
           position={[-4.42, 1.99, 0.21]}
           rotation={[0, Math.PI / 2, 0]}
-          visible={false} // 👈 visibility toggle
+          visible={false}
           onClick={handleExitAboutMeClick}
           onPointerOver={() => (document.body.style.cursor = "pointer")}
           onPointerOut={() => (document.body.style.cursor = "default")}
@@ -987,7 +956,6 @@ export default function Avatar_dev_place({
         />
         {!performanceMode && (
           <>
-            {/* LAZY-LOAD: Book component — wrapped in Suspense so it loads on demand (can revert this block if needed) */}
             <Suspense fallback={null}>
               {showBook && <Book ref={bookRef} />}
             </Suspense>
@@ -1011,19 +979,6 @@ export default function Avatar_dev_place({
             <DoorSign />
           </>
         )}
-        {/* <TreeClicked /> */}
-        {/* <SceneLightsOn /> */}
-        {/* {showLights && <LightsOffBloom />} */}
-        {/* Εδώ το φως αν δεν υπάρχει bloom */}
-        {/* <pointLight
-          position={[0, 3, -1]}
-          angle={Math.PI / 2}
-          penumbra={3.5}
-          intensity={15}
-          castShadow={false}
-          color="White"
-        /> */}
-        {/* <TreeMiddle /> */}
         {showTVMenu && <TVMenu ref={tvMenuRef} />}
         {showRemote}
         <GrassAndSkyAndDevObjects />
@@ -1031,12 +986,6 @@ export default function Avatar_dev_place({
         <DevPlaceKtx2 />
         {!showHouse && <Scene />}
         <LightsOffBloom />
-        {/* <Grass /> */}
-        {/* {!showHouse && (
-          <Rose />
-        </group>
-      )}
-      {!showHouse && <Violet ref={violetRef} />} */}
       </group>
     </>
   );

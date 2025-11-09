@@ -1,16 +1,8 @@
-// 2ος
 import React, { useEffect, useRef, useState } from "react";
 import { useGraph } from "@react-three/fiber";
-import { useAnimations, useFBX, useGLTF, useTexture } from "@react-three/drei";
+import { useGLTF, useTexture } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
-import {
-  Bloom,
-  EffectComposer,
-  ToneMapping,
-} from "@react-three/postprocessing";
 import { Text } from "@react-three/drei";
-import { useLoader } from "@react-three/fiber";
-import CameraControlsImpl from "camera-controls";
 import { CameraControls } from "@react-three/drei";
 import * as THREE from "three";
 import { HouseAccountant } from "./HouseAccountant";
@@ -20,7 +12,6 @@ import Building from "./Building";
 import Avatar from "../Avatar";
 import BuildingsWhite from "./BuildingsWhite";
 import Tree from "./Tree";
-import TreeClicked from "./TreeClicked";
 import PCAccountant from "./PCAccountant";
 import Scene from "./Scene";
 import { Ink } from "./Ink";
@@ -44,7 +35,6 @@ export default function Avatar_acc_place({
   const meshRefInitial = useRef();
   const meshRef = useRef();
   const [showHouse, setShowHouse] = useState(false);
-  // const [showTree, setShowTree] = useState(true);
   const [prevMaxPolarAngle, setPrevMaxPolarAngle] = useState(null);
   const hoverSoundRef = useRef(null);
   {
@@ -60,7 +50,6 @@ export default function Avatar_acc_place({
     : null;
   useEffect(() => {
     if (!safeAudioPath) {
-      console.error("Blocked unsafe audio path");
       return;
     }
 
@@ -175,7 +164,6 @@ export default function Avatar_acc_place({
   const handleClick = () => {
     setShowHouse(true);
     setShowCube(true);
-    // setShowTree(false);
     setShowToggleButton(false); // για απόκρυψη button μέρα/νύχτα
     if (meshRef.current && cameraControlsRef.current) {
       const meshWorldPosition = new THREE.Vector3();
@@ -221,7 +209,6 @@ export default function Avatar_acc_place({
   const handleExitClick = () => {
     setShowToggleButton(true); // για απόκρυψη button μέρα/νύχτα
     setShowHouse(false);
-    // setShowTree(true);
     if (onRequestNightDisposal) {
       onRequestNightDisposal();
     }
@@ -338,7 +325,7 @@ export default function Avatar_acc_place({
     setShowToggleButton(false);
     if (!cameraControlsRef.current) return;
     const target = [-18.6, -0.11, 26.2];
-    const radius = 1.0; // distance from the target
+    const radius = 1.0;
     const angleZ = Math.PI / 2;
     cameraControlsRef.current.minDistance = -0.5;
     cameraControlsRef.current.maxDistance = 3.5;
@@ -366,12 +353,7 @@ export default function Avatar_acc_place({
   };
 
   const group = useRef();
-  // const { scene } = useGLTF("Objects/Final/avatar.glb");
-
-  // const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
-  // const { nodes } = useGraph(clone); // Ονόμασα φάκελο σε public: animation και βάζω useFBX γιατί έχω format FBX
-  // const texture = useTexture("/textures/book-cover.jpg"); // αφορά επικάλυψη του βιβλίου
-  const modelPath = "Objects/Final/avatar.glb";
+  const modelPath = `${window.location.origin}/Objects/Final/avatar.glb`;
   const texturePath = "/textures/book-cover.jpg";
 
   if (!validateModelPath(modelPath)) {
@@ -446,7 +428,7 @@ export default function Avatar_acc_place({
           textAlign="center"
           scale={0.55}
         >
-          Building <meshStandardMaterial color={"gray"} /> 
+          Building <meshStandardMaterial color={"gray"} />
         </Text>
       )}
       {/* παρακάτω η επικάλυψη του βιβλίου */}
@@ -456,7 +438,7 @@ export default function Avatar_acc_place({
         visible={showCube}
         rotation={[0, 0, Math.PI / 2]}
       >
-        <boxGeometry args={[0.01, 0.48, 0.32]} /> {/* Width, Height */}
+        <boxGeometry args={[0.01, 0.48, 0.32]} />
         <meshBasicMaterial map={texture} />
       </mesh>
       {/* μέχρι εδώ η επικάλυψη του βιβλίου */}
@@ -733,7 +715,6 @@ export default function Avatar_acc_place({
       <Deutsch />
       <Master />
       <Arithmodeiktes />
-      {/* {showTree && <TreeClicked />} */}
       {showHouse && <FloatingTexts />}
     </group>
   );

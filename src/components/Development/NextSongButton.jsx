@@ -1,12 +1,12 @@
 import React from "react";
 import { useGLTF } from "@react-three/drei";
 import { validateModelPath } from "../../utils/security";
-const modelPath = "models/NextSongButton.gltf";
+const modelPath = `${window.location.origin}/models/NextSongButton.gltf`;
 export function NextSongButton(props) {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe 3D model:", modelPath);
-    return null; // Don't render anything
-  } // μέχρι εδώ
+    return null;
+  }
 
   const { nodes, materials } = useGLTF(modelPath);
   return (

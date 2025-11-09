@@ -1,22 +1,19 @@
-// 5ος
 import React, { useRef, useEffect } from "react";
-import { useGLTF, useAnimations } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
-import Scene from "./Scene";
-import { useThree, useLoader } from "@react-three/fiber";
+import { useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useSharedKTX2Loader } from "../../useSharedKTX2Loader";
 import { validateModelPath } from "../../utils/security";
 
-// Register the KTX2 loader
 THREE.DefaultLoadingManager.addHandler(
   /\.ktx2$/,
   new KTX2Loader()
     .setTranscoderPath("/basis/")
     .detectSupport(new THREE.WebGLRenderer())
 );
-// --- Shelf Rows ---
+// --- Shelves ---
 const shelfTopRow = Array.from({ length: 8 }, (_, i) => ({
   position: [-3.0155 + i * 0.89, 2.17, -4.78],
   rotation: [0, 0, 0],
@@ -65,7 +62,7 @@ const shelvesLowerBlackLess = Array.from({ length: 3 }, (_, i) => ({
   rotation: [0, 45.56, 0],
   scale: [0.44, 0.4, 0.27],
 }));
-// --- Handle Rows ---
+// --- Handles ---
 const handleTopRow = Array.from({ length: 8 }, (_, i) => ({
   position: [3.317 - i * 0.89, 1.9, -4.466],
   rotation: [1.57, Math.PI / 2, 0],
@@ -155,7 +152,6 @@ const handleShelvesMiddleLeftSingle = Array.from({ length: 1 }, (_, i) => ({
   rotation: [1.57, Math.PI / 2, 0],
   scale: [-0.059, -1, -0.012],
 }));
-// --- Generic Instanced Mesh Group ---
 const InstancedMeshGroup = ({ data, geometry, material }) => {
   const meshRef = useRef();
 
@@ -186,7 +182,7 @@ const InstancedMeshGroup = ({ data, geometry, material }) => {
     />
   );
 };
-// --- Shelves Component ---
+// --- Shelves ---
 const InstancedShelves = ({ nodes, materials }) => {
   return (
     <>
@@ -217,7 +213,7 @@ const InstancedShelves = ({ nodes, materials }) => {
         geometry={nodes.ShelvesUpperLeft.geometry}
         material={materials["Shelves_black.001"]}
       />
-      {/* από εδώ είναι dummy*/}
+
       <InstancedMeshGroup
         data={shelvesMiddleWhiteSingle}
         geometry={nodes.ShelvesMiddleWhiteSingle.geometry}
@@ -303,11 +299,10 @@ const InstancedShelves = ({ nodes, materials }) => {
         geometry={nodes.Folder.geometry}
         material={materials["Cubo.003_baked"]}
       />
-      {/* μέχρι εδώ είναι dummy*/}
     </>
   );
 };
-// --- Handles Component ---
+// --- Handles  ---
 const InstancedHandles = ({ nodes, materials }) => {
   return (
     <>
@@ -331,16 +326,15 @@ const InstancedHandles = ({ nodes, materials }) => {
     </>
   );
 };
-// --- Main Scene Component ---
-const modelPath = "Objects/Final/Shelves.glb";
+const modelPath = "/Objects/Final/Shelves.glb";
 export function HouseAccountant(props) {
   const group = useRef();
   const ktx2Loader = useSharedKTX2Loader();
-  // πρόσθεσα αυτό
+
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe 3D model:", modelPath);
     return null;
-  } // μέχρι εδώ
+  }
   const { nodes, materials } = useLoader(GLTFLoader, modelPath, (loader) => {
     loader.setKTX2Loader(ktx2Loader);
   });

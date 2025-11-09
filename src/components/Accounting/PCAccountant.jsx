@@ -5,16 +5,6 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { LinearFilter } from "three";
 import { validateAssetPath, validateVideoPath } from "../../utils/security";
 
-// const Content = ({ projectId }) => {
-//   const contentMap = {
-//     1: "This is the content for Project 1.",
-//     2: "This is the content for Project 2.",
-//     3: "This is the content for Project 3.",
-//     4: "This is the content for Project 4.",
-//     5: "This is the content for Project 5.",
-//   };
-//   return contentMap[projectId] || "No content found for this project.";
-// };
 export default function PCAccountant() {
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const videoRefs = useRef({});
@@ -68,29 +58,8 @@ export default function PCAccountant() {
       video: "/video_BlenderChair.mp4",
       icon: "/textures/TexturesCompressed/Accountant/icon_video_player_4.jpg",
     },
-    // {
-    //   id: 5,
-    //   name: "React",
-    //   video: "/video_BlenderChair.mp4",
-    //   icon: "/textures/TexturesCompressed/Accountant/icon_video_player_4.jpg",
-    // },
   ];
-  // const iconTextures = useTexture(projects.map((p) => p.icon));
-  // const stickyNotes = useTexture(
-  //   "/textures/TexturesCompressed/Accountant/StickyNotes7.jpg"
-  // );
-  // const bar = useTexture("/textures/TexturesCompressed/Accountant/bar.jpg");
-  // const xsign = useTexture("/textures/TexturesCompressed/Accountant/xsign.jpg");
-  // const minussign = useTexture(
-  //   "/textures/TexturesCompressed/Accountant/minussign.jpg"
-  // );
-  // const videoIcon = useTexture(
-  //   "/textures/TexturesCompressed/Accountant/VideoIcon.jpg"
-  // );
 
-  // edv
-
-  // Validate all paths
   const allIconsValid = projects.every((p) => validateAssetPath(p.icon));
   const allVideosValid = projects.every((p) => validateVideoPath(p.video));
 
@@ -111,7 +80,6 @@ export default function PCAccountant() {
     return null;
   }
 
-  // Now load textures safely
   const iconTextures = useTexture(projects.map((p) => p.icon));
   const stickyNotes = useTexture(
     "/textures/TexturesCompressed/Accountant/StickyNotes7.jpg"
@@ -124,7 +92,6 @@ export default function PCAccountant() {
   const videoIcon = useTexture(
     "/textures/TexturesCompressed/Accountant/VideoIcon.jpg"
   );
-  // μέχρι εδώ
 
   useEffect(() => {
     [stickyNotes, ...iconTextures, bar, xsign, minussign, videoIcon].forEach(
@@ -163,17 +130,16 @@ export default function PCAccountant() {
   };
 
   useEffect(() => {
-    // Pause all videos
     Object.entries(videoRefs.current).forEach(([id, video]) => {
       if (!video.paused) {
         video.pause();
       }
     });
-    // Play selected video from beginning
+
     if (selectedProjectId !== null && videoRefs.current[selectedProjectId]) {
       const selectedVideo = videoRefs.current[selectedProjectId];
       selectedVideo.currentTime = 0;
-      // Stop all video sync callbacks
+
       Object.keys(rvfcIds.current).forEach((vid) => stopVideoSync(vid));
       selectedVideo
         .play()
@@ -217,20 +183,18 @@ export default function PCAccountant() {
       "/textures/TexturesCompressed/Accountant/DesktopSearch.jpg",
     ];
 
-    // VALIDATE PATHS BEFORE LOADING
     const safeTexturePaths = texturePaths.filter((path) => {
       const isValid = validateAssetPath(path);
       if (!isValid) console.error("Blocked unsafe texture path:", path);
       return isValid;
     });
 
-    // ONLY LOAD IF ALL PATHS ARE SAFE
     if (safeTexturePaths.length !== texturePaths.length) {
       console.error("Some texture paths failed validation");
       return null;
     }
 
-    const [desktopIcon, windowTexture] = useTexture(safeTexturePaths); // CHANGE THIS LINE
+    const [desktopIcon, windowTexture] = useTexture(safeTexturePaths);
 
     const [showWindow, setShowWindow] = useState(false);
     const [textureLoaded, setTextureLoaded] = useState(false);
@@ -342,7 +306,7 @@ export default function PCAccountant() {
           <mesh
             position={[-0.293, 1.452, -2.117]}
             rotation={[0, -Math.PI / 1.0001, 0]}
-            onClick={handleBackClick} // stops video and hides it
+            onClick={handleBackClick}
             onPointerOver={() => (document.body.style.cursor = "pointer")}
             onPointerOut={() => (document.body.style.cursor = "default")}
           >
@@ -356,7 +320,7 @@ export default function PCAccountant() {
             rotation={[0, -Math.PI / 1.0001, 0]}
             onClick={() => {
               setIsVideoMinimized(true);
-              // pause video but keep loaded
+
               if (selectedProjectId && videoRefs.current[selectedProjectId]) {
                 videoRefs.current[selectedProjectId].pause();
               }
@@ -383,15 +347,6 @@ export default function PCAccountant() {
             />
           </mesh>
           {/* Video description text */}
-          {/* <Text
-            position={[0.72, 1.38, -2.116]}
-            rotation={[0, -Math.PI / 1.0001, 0]}
-            fontSize={0.02}
-            color="white"
-            maxWidth={0.1}
-          >
-            {Content({ projectId: selectedProjectId })}
-          </Text> */}
         </>
       )}
 
