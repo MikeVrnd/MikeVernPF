@@ -1,65 +1,3 @@
-// export const validateAssetPath = (path) => {
-//   if (!path || typeof path !== "string") return false;
-
-//   const allowed = [
-//     "/textures/TexturesCompressed/SoundOff.jpg",
-//     "/textures/TexturesCompressed/SoundOn.jpg",
-//     "/textures/TexturesCompressed/Sun.png",
-//     "/textures/TexturesCompressed/Moon.png",
-//     "/little_birds_singing_day.mp3",
-//     "/summer_night_crickets_night.mp3",
-//     "/fonts/bodoni-mt-bold-italic.ttf",
-//     "/panel_click.mp3",
-//   ];
-//   return allowed.some((allowedPath) => path === allowedPath);
-// };
-
-// export const testSecurity = () => {
-//   const tests = [
-//     // ✅ Safe paths that should be ALLOWED
-//     { path: "/Sun.png", expected: true },
-//     { path: "/Moon.png", expected: true },
-//     { path: "/textures/wood.jpg", expected: true },
-//     { path: "/textures/TexturesCompressed/SoundOn.jpg", expected: true },
-
-//     // ✅ Safe paths that should be BLOCKED (fake malicious patterns)
-//     { path: "/../../../etc/passwd", expected: false }, // Directory traversal
-//     { path: "/evil/script.js", expected: false }, // Wrong file type
-//     { path: "https://hacker.com/exploit.jpg", expected: false }, // External URL
-//     { path: "javascript:alert('xss')", expected: false }, // XSS attempt
-//     { path: "/wp-admin", expected: false }, // Common attack path
-//     { path: "/.env", expected: false }, // Config file access
-//     { path: "/backdoor.php", expected: false }, // PHP execution
-//     { path: "/<script>alert()</script>", expected: false }, // HTML injection
-//     { path: null, expected: false }, // Null input
-//     { path: undefined, expected: false }, // Undefined input
-//     { path: 12345, expected: false }, // Wrong data type
-//   ];
-
-//   let allPassed = true;
-
-//   tests.forEach((test) => {
-//     const result = validateAssetPath(test.path);
-//     console.log(`🔒 ${test.path} → ${result} (expected: ${test.expected})`);
-
-//     if (result !== test.expected) {
-//       console.warn("❌ SECURITY FAILURE!");
-//       allPassed = false;
-//     }
-//   });
-
-//   if (allPassed) {
-//     console.log("🎉 ALL SECURITY TESTS PASSED!");
-//   } else {
-//     console.warn("⚠️ Some security tests failed!");
-//   }
-// };
-// // Make it available globally for testing
-// if (process.env.NODE_ENV === "development") {
-//   window.testSecurity = testSecurity;
-//   window.validateAssetPath = validateAssetPath;
-// }
-
 export const validateAnimationPath = (path) => {
   if (!path || typeof path !== "string") return false;
 
@@ -67,7 +5,7 @@ export const validateAnimationPath = (path) => {
 
   if (path.includes("..") || path.includes("//")) return false;
 
-  const validExtensions = [".fbx", ".glb`, ".gltf"];
+  const validExtensions = [".fbx", ".glb", ".gltf"];
   const hasValidExtension = validExtensions.some((ext) =>
     path.toLowerCase().endsWith(ext)
   );
@@ -182,10 +120,8 @@ export const validateModelPath = (path) => {
     `${window.location.origin}/Objects/Final/PavementFinal6_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`,
   ];
 
-  // Check for path traversal attacks
   if (path.includes("..") || path.includes("//")) return false;
 
-  // Check for valid file extensions
   const validExtensions = [".glb", ".gltf"];
   const hasValidExtension = validExtensions.some((ext) =>
     path.toLowerCase().endsWith(ext)
@@ -197,15 +133,22 @@ export const validateModelPath = (path) => {
 
 export const testSecurity = () => {
   const tests = [
-    // ✅ Safe paths that should be ALLOWED
-    { path: `${window.location.origin}/textures/TexturesCompressed/SoundOn.jpg`, expected: true },
+    {
+      path: `${window.location.origin}/textures/TexturesCompressed/SoundOn.jpg`,
+      expected: true,
+    },
     { path: `${window.location.origin}/panel_click.mp3`, expected: true },
   ];
 
   const modelTests = [
-    // ✅ 3D Model tests
-    { path: `${window.location.origin}/Objects/Final/avatar.glb`, expected: true },
-    { path: `${window.location.origin}/Objects/Final/avatar.glb`, expected: true },
+    {
+      path: `${window.location.origin}/Objects/Final/avatar.glb`,
+      expected: true,
+    },
+    {
+      path: `${window.location.origin}/Objects/Final/avatar.glb`,
+      expected: true,
+    },
   ];
 
   let allPassed = true;
@@ -237,9 +180,12 @@ export const testSecurity = () => {
   }
 };
 
-// Make it available globally for testing
 if (process.env.NODE_ENV === "development") {
   window.testSecurity = testSecurity;
   window.validateAssetPath = validateAssetPath;
+  window.validateModelPath = validateModelPath;
+}
+
+if (typeof window !== "undefined") {
   window.validateModelPath = validateModelPath;
 }
