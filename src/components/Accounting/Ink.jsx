@@ -2,7 +2,7 @@ import React from "react";
 import { useGLTF } from "@react-three/drei";
 import { validateModelPath } from "../../utils/security";
 
-const modelPath = `${window.location.origin}/Objects/Final/Ink9.glb`;
+const modelPath = "https://mike-vern-pf.vercel.app/Objects/Final/Ink9.glb";
 export function Ink(props) {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe model path:", modelPath);

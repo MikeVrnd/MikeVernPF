@@ -514,7 +514,7 @@ export default function Avatar_dev_place({
     new THREE.MeshStandardMaterial({ color: "black" }),
   ];
   const group = useRef();
-  const modelPath = `${window.location.origin}/Objects/Final/avatar.glb`;
+  const modelPath = "https://mike-vern-pf.vercel.app/Objects/Final/avatar.glb";
   const texturePath = "/textures/book-cover.jpg";
 
   if (!validateModelPath(modelPath)) {

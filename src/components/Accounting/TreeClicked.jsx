@@ -177,7 +177,8 @@ const LODInstancedTree = ({ scene, data, position }) => {
     </group>
   );
 };
-const modelPath = `${window.location.origin}/Objects/Final/Tree_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`;
+const modelPath =
+  "https://mike-vern-pf.vercel.app/Objects/Final/Tree_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb";
 
 export default function Tree({ onLoad }) {
   if (!validateModelPath(modelPath)) {
@@ -196,7 +197,6 @@ export default function Tree({ onLoad }) {
   }, [scene, onLoad]);
   return (
     <>
-      {/* Middle trees */}
       <LODInstancedTree
         scene={scene}
         data={TreeMiddle}

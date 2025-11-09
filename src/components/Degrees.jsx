@@ -80,8 +80,8 @@ function useMasterAnimation() {
     position,
   };
 }
-const modelPath = `${window.location.origin}/Objects/Final/Degrees.glb`;
-const audioPath = `${window.location.origin}/hover.mp3`;
+const modelPath = "https://mike-vern-pf.vercel.app/Objects/Final/Degrees.glb";
+const audioPath = "https://mike-vern-pf.vercel.app/hover.mp3";
 const Bachelor = forwardRef((props, ref) => {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe model path:", modelPath);

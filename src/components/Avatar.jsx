@@ -4,7 +4,7 @@ import { useAnimations, useFBX, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 import { validateAnimationPath, validateModelPath } from "../utils/security";
 
-const modelPath = `${window.location.origin}/Objects/Final/avatar.glb`;
+const modelPath = "https://mike-vern-pf.vercel.app/Objects/Final/avatar.glb";
 export default function Avatar(props) {
   const group = useRef();
   const { scene } = useGLTF(modelPath);

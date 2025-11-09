@@ -4,7 +4,8 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { useSharedKTX2Loader } from "../../useSharedKTX2Loader";
 import { validateModelPath } from "../../utils/security";
-const modelPath = `${window.location.origin}/Objects/Final/Accountant_place_city_without_building_with_mountain_texture_with_signpost_resized_etc1s_draco_dedup_pruned_simplified_final_optimized.glb`;
+const modelPath =
+  "https://mike-vern-pf.vercel.app/Objects/Final/Accountant_place_city_without_building_with_mountain_texture_with_signpost_resized_etc1s_draco_dedup_pruned_simplified_final_optimized.glb";
 
 export default function AccPlaceKtx2({ visible = true, onLoad }) {
   const ktx2Loader = useSharedKTX2Loader();

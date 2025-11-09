@@ -1,12 +1,13 @@
 import React from "react";
 import { useGLTF } from "@react-three/drei";
 import { validateModelPath } from "../../utils/security";
-const modelPath = `${window.location.origin}/Objects/Final/DevPlaceMergedFinalWithoutFramesBetterPillowsWithoutPortrait.glb`;
+const modelPath =
+  "https://mike-vern-pf.vercel.app/Objects/Final/DevPlaceMergedFinalWithoutFramesBetterPillowsWithoutPortrait.glb";
 export default function DevPlaceKtx2(props) {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe 3D model:", modelPath);
-    return null; // Don't render anything
-  } // μέχρι εδώ
+    return null;
+  }
 
   const { nodes, materials } = useGLTF(modelPath);
   return (

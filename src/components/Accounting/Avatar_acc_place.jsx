@@ -353,7 +353,7 @@ export default function Avatar_acc_place({
   };
 
   const group = useRef();
-  const modelPath = `${window.location.origin}/Objects/Final/avatar.glb`;
+  const modelPath = "https://mike-vern-pf.vercel.app/Objects/Final/avatar.glb";
   const texturePath = "/textures/book-cover.jpg";
 
   if (!validateModelPath(modelPath)) {
