@@ -2,7 +2,7 @@ export const validateAnimationPath = (path) => {
   if (!path || typeof path !== "string") return false;
 
   const allowedAnimations = [
-    "/animations/Typing.fbx",
+    "animations/Typing.fbx",
     "https://mike-vern-pf.vercel.app/animations/Typing.fbx",
   ];
 
