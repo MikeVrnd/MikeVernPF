@@ -196,6 +196,7 @@ export const validateAssetPath = (path) => {
     ".glb",
     ".gltf",
     ".fbx",
+    ".mp3",
   ];
 
   const lowerPath = path.toLowerCase();
