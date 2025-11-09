@@ -2,8 +2,7 @@ import React from "react";
 import { useGLTF } from "@react-three/drei";
 import { validateModelPath } from "../../utils/security";
 
-const modelPath =
-  "https://mike-vern-pf.vercel.app/Objects/Final/Arithmodeiktes.glb";
+const modelPath = `${window.location.origin}/Objects/Final/Arithmodeiktes.glb`;
 
 export function Arithmodeiktes(props) {
   const { nodes, materials } = useGLTF(modelPath);

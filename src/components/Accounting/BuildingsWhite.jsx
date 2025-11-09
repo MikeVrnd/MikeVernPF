@@ -204,8 +204,7 @@ const InstancedSingle = ({ nodes, materials }) => {
   );
 };
 
-const modelPath =
-  "https://mike-vern-pf.vercel.app/Objects/Final/JustOneBuildinig_opt_resized_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb";
+const modelPath = `${window.location.origin}/Objects/Final/JustOneBuildinig_opt_resized_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`;
 export default function BuildingsWhite(props) {
   const group = useRef();
 

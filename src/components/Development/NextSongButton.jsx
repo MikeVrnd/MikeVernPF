@@ -1,7 +1,7 @@
 import React from "react";
 import { useGLTF } from "@react-three/drei";
 import { validateModelPath } from "../../utils/security";
-const modelPath = "https://mike-vern-pf.vercel.app/models/NextSongButton.gltf";
+const modelPath = `${window.location.origin}/models/NextSongButton.gltf`;
 export function NextSongButton(props) {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe 3D model:", modelPath);

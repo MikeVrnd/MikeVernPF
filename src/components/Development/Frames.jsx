@@ -4,8 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { useSharedKTX2Loader } from "../../useSharedKTX2Loader";
 import { validateModelPath } from "../../utils/security";
-const modelPath =
-  "https://mike-vern-pf.vercel.app/Objects/Final/Frames_resized_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb";
+const modelPath = `${window.location.origin}/Objects/Final/Frames_resized_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`;
 
 export default function Frames({
   position = [0, 0, 0],

@@ -35,7 +35,7 @@ function useShakeAndScale() {
 }
 
 // Cup Component
-const modelPath = "https://mike-vern-pf.vercel.app/Objects/Final/Cup.glb";
+const modelPath = `${window.location.origin}/Objects/Final/Cup.glb`;
 const audioPath = "/Doink.mp3";
 const audioPathHover = "/hover.mp3";
 const Cup = forwardRef((props, ref) => {
@@ -128,8 +128,7 @@ function usePortraitAnimation() {
 }
 
 // Portrait Component
-const modelPathPortrait =
-  "https://mike-vern-pf.vercel.app/Objects/Final/PortraitMerged.glb";
+const modelPathPortrait = `${window.location.origin}/Objects/Final/PortraitMerged.glb`;
 const Portrait = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF(modelPathPortrait);
   if (!validateModelPath(modelPathPortrait)) {
@@ -259,8 +258,7 @@ function useMasterAnimation() {
   };
 }
 
-const modelPathDegrees =
-  "https://mike-vern-pf.vercel.app/Objects/Final/Degrees.glb";
+const modelPathDegrees = `${window.location.origin}/Objects/Final/Degrees.glb`;
 const Bachelor = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF(modelPathDegrees);
   if (!validateModelPath(modelPathDegrees)) {

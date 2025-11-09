@@ -315,8 +315,7 @@ const LODInstancedTree = ({ scene, data, position }) => {
     </group>
   );
 };
-const modelPath =
-  "https://mike-vern-pf.vercel.app/Objects/Final/Tree_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb";
+const modelPath = `${window.location.origin}/Objects/Final/Tree_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`;
 export default function Tree({ onLoad }) {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe model path:", modelPath);
@@ -408,7 +407,7 @@ export default function Tree({ onLoad }) {
 
       {SideTrees.right.map((treeGroup, index) => (
         <LODInstancedTree
-          key={"right-${index}"}
+          key={`right-${index}`}
           scene={scene}
           data={treeGroup.positions.map((pos) => ({
             position: pos,
@@ -420,7 +419,7 @@ export default function Tree({ onLoad }) {
       ))}
       {SideTrees.left.map((treeGroup, index) => (
         <LODInstancedTree
-          key={"left-${index}"}
+          key={`left-${index}`}
           scene={scene}
           data={treeGroup.positions.map((pos) => ({
             position: pos,
@@ -432,7 +431,7 @@ export default function Tree({ onLoad }) {
       ))}
       {SideTrees.back.map((treeGroup, index) => (
         <LODInstancedTree
-          key={"back-${index}"}
+          key={`back-${index}`}
           scene={scene}
           data={treeGroup.positions.map((pos) => ({
             position: pos,
@@ -444,7 +443,7 @@ export default function Tree({ onLoad }) {
       ))}
       {SideTrees.corners.map((treeGroup, index) => (
         <LODInstancedTree
-          key={"corner-${index}"}
+          key={`corner-${index}`}
           scene={scene}
           data={treeGroup.positions.map((pos) => ({
             position: pos,
@@ -457,7 +456,7 @@ export default function Tree({ onLoad }) {
 
       {SideTrees.right.map((treeGroup, index) => (
         <LODInstancedTree
-          key={"right-${index}"}
+          key={`right-${index}`}
           scene={scene}
           data={treeGroup.positions.map((pos) => ({
             position: pos,
@@ -469,7 +468,7 @@ export default function Tree({ onLoad }) {
       ))}
       {SideTrees.left.map((treeGroup, index) => (
         <LODInstancedTree
-          key={"left-${index}"}
+          key={`left-${index}`}
           scene={scene}
           data={treeGroup.positions.map((pos) => ({
             position: pos,
@@ -481,7 +480,7 @@ export default function Tree({ onLoad }) {
       ))}
       {SideTrees.back.map((treeGroup, index) => (
         <LODInstancedTree
-          key={"back-${index}"}
+          key={`back-${index}`}
           scene={scene}
           data={treeGroup.positions.map((pos) => ({
             position: pos,
@@ -493,7 +492,7 @@ export default function Tree({ onLoad }) {
       ))}
       {SideTrees.corners.map((treeGroup, index) => (
         <LODInstancedTree
-          key={"corner-${index}"}
+          key={`corner-${index}`}
           scene={scene}
           data={treeGroup.positions.map((pos) => ({
             position: pos,

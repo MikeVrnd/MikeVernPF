@@ -4,8 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useLoader } from "@react-three/fiber";
 import { useSharedKTX2Loader } from "../../useSharedKTX2Loader";
 import { validateModelPath } from "../../utils/security";
-const modelPath =
-  "https://mike-vern-pf.vercel.app/Objects/Final/AccPlaceHalfBuildingWithoutFramesAndDegrees_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb";
+const modelPath = `${window.location.origin}/Objects/Final/AccPlaceHalfBuildingWithoutFramesAndDegrees_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`;
 
 export default function Scene({ onLoad }) {
   if (!validateModelPath(modelPath)) {
