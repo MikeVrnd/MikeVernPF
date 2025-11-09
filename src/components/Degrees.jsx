@@ -82,7 +82,7 @@ function useMasterAnimation() {
   };
 }
 const modelPath = `${window.location.origin}/Objects/Final/Degrees.glb`;
-const audioPath = "hover.mp3";
+const audioPath = "/hover.mp3";
 const Bachelor = forwardRef((props, ref) => {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe model path:", modelPath);

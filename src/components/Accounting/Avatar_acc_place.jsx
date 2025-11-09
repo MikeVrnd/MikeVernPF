@@ -1405,7 +1405,7 @@ export default function Avatar_acc_place({
       {showHouse && <Ink />}
       <BuildingsWhite />
       <Tree />
-      <Bachelor />
+      {showHouse && <Bachelor />}
       <Proficiency />
       <LogisthsAtaxhs />
       <Deutsch />

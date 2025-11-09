@@ -255,7 +255,262 @@
 //   window.validateVideoPath = validateVideoPath;
 //   window.validateAnimationPath = validateAnimationPath;
 // }
-// 4ος
+// 4ος σωστός πλην accountant
+// export function validateAssetPath(path) {
+//   if (!path || typeof path !== "string") return false;
+
+//   // Safe window access
+//   const origin = typeof window !== "undefined" ? window.location.origin : "";
+
+//   const allowedOrigins = [
+//     origin,
+//     "http://localhost:5173",
+//     "http://localhost:4173", // Vite preview
+//   ];
+
+//   const allowedPrefixes = [
+//     "/textures/",
+//     "/objects/",
+//     "/videos/",
+//     "/animations/",
+//     "/models/",
+//     "/audios/",
+//     "/fonts/",
+//     "/panel_click.mp3",
+//     "/tv_off.mp3",
+//   ];
+
+//   const validExtensions = [
+//     ".jpg",
+//     ".jpeg",
+//     ".png",
+//     ".ktx2",
+//     ".mp4",
+//     ".webm",
+//     ".ogg",
+//     ".glb",
+//     ".gltf",
+//     ".fbx",
+//     ".mp3",
+//     ".ttf",
+//     ".otf",
+//     ".woff",
+//     ".woff2",
+//   ];
+
+//   // Block directory traversal
+//   if (path.includes("..")) return false;
+
+//   const lowerPath = path.toLowerCase();
+
+//   // If path includes origin, strip it for prefix checking
+//   let pathToCheck = path;
+//   for (const allowedOrigin of allowedOrigins) {
+//     if (allowedOrigin && path.startsWith(allowedOrigin)) {
+//       pathToCheck = path.substring(allowedOrigin.length);
+//       break;
+//     }
+//   }
+
+//   const lowerPathToCheck = pathToCheck.toLowerCase();
+
+//   // Check if stripped path has allowed prefix
+//   const hasAllowedPrefix = allowedPrefixes.some((p) =>
+//     lowerPathToCheck.startsWith(p.toLowerCase())
+//   );
+
+//   // Check extension
+//   const hasValidExt = validExtensions.some((ext) => lowerPath.endsWith(ext));
+
+//   return hasAllowedPrefix && hasValidExt;
+// }
+
+// // Wrapper functions - explicitly export as separate functions
+// export function validateModelPath(path) {
+//   return validateAssetPath(path);
+// }
+
+// export function validateVideoPath(path) {
+//   return validateAssetPath(path);
+// }
+
+// export function validateAnimationPath(path) {
+//   return validateAssetPath(path);
+// }
+
+// // Test function
+// export function testSecurity() {
+//   const tests = [
+//     { path: "/textures/TexturesCompressed/SoundOn.jpg", expected: true },
+//     { path: "/Objects/Final/avatar.glb", expected: true },
+//     { path: "/videos/ReactFinal.mp4", expected: true },
+//     { path: "/panel_click.mp3", expected: true },
+//     { path: "/fonts/bodoni-mt-bold-italic.ttf", expected: true },
+//     { path: "https://evil.com/hack.glb", expected: false },
+//     { path: "../textures/malicious.jpg", expected: false },
+//   ];
+
+//   let allPassed = true;
+//   console.log("🔒 Running security tests...");
+
+//   tests.forEach((t) => {
+//     const result = validateAssetPath(t.path);
+//     const status = result === t.expected ? "✅" : "❌";
+//     console.log(`${status} ${t.path} → ${result} (expected ${t.expected})`);
+//     if (result !== t.expected) allPassed = false;
+//   });
+
+//   if (allPassed) console.log("\n🎉 ALL SECURITY TESTS PASSED");
+//   else console.warn("\n⚠️ Some tests failed");
+// }
+
+// // Make available globally for debugging
+// if (typeof window !== "undefined") {
+//   window.validateAssetPath = validateAssetPath;
+//   window.validateModelPath = validateModelPath;
+//   window.validateVideoPath = validateVideoPath;
+//   window.validateAnimationPath = validateAnimationPath;
+
+//   if (import.meta.env?.DEV) {
+//     window.testSecurity = testSecurity;
+//   }
+// }
+// 5ος δουλεύει
+// Core validation function - always exported first
+// export function validateAssetPath(path) {
+//   if (!path || typeof path !== "string") return false;
+
+//   // Safe window access
+//   const origin = typeof window !== "undefined" ? window.location.origin : "";
+
+//   const allowedOrigins = [
+//     origin,
+//     "http://localhost:5173",
+//     "http://localhost:4173", // Vite preview
+//   ];
+
+//   const allowedPrefixes = [
+//     "/textures/",
+//     "/objects/",
+//     "/videos/",
+//     "/animations/",
+//     "/models/",
+//     "/audios/",
+//     "/fonts/",
+//   ];
+
+//   // Specific allowed files in root
+//   const allowedRootFiles = [
+//     "/panel_click.mp3",
+//     "/tv_off.mp3",
+//     "/vba.mp4",
+//     "/reactfinal.mp4",
+//     "/video_imageviewer_com_540p.mp4",
+//     "/video_blenderchair.mp4",
+//     "/video_moonraker_πάγια-720p.mp4",
+//   ];
+
+//   const validExtensions = [
+//     ".jpg",
+//     ".jpeg",
+//     ".png",
+//     ".ktx2",
+//     ".mp4",
+//     ".webm",
+//     ".ogg",
+//     ".glb",
+//     ".gltf",
+//     ".fbx",
+//     ".mp3",
+//     ".ttf",
+//     ".otf",
+//     ".woff",
+//     ".woff2",
+//   ];
+
+//   // Block directory traversal
+//   if (path.includes("..")) return false;
+
+//   const lowerPath = path.toLowerCase();
+
+//   // If path includes origin, strip it for prefix checking
+//   let pathToCheck = path;
+//   for (const allowedOrigin of allowedOrigins) {
+//     if (allowedOrigin && path.startsWith(allowedOrigin)) {
+//       pathToCheck = path.substring(allowedOrigin.length);
+//       break;
+//     }
+//   }
+
+//   const lowerPathToCheck = pathToCheck.toLowerCase();
+
+//   // Check if stripped path has allowed prefix
+//   const hasAllowedPrefix = allowedPrefixes.some((p) =>
+//     lowerPathToCheck.startsWith(p.toLowerCase())
+//   );
+
+//   // Check if it's an allowed root file
+//   const isAllowedRootFile = allowedRootFiles.some(
+//     (f) => lowerPathToCheck === f.toLowerCase()
+//   );
+
+//   // Check extension
+//   const hasValidExt = validExtensions.some((ext) => lowerPath.endsWith(ext));
+
+//   return (hasAllowedPrefix || isAllowedRootFile) && hasValidExt;
+// }
+
+// // Wrapper functions - explicitly export as separate functions
+// export function validateModelPath(path) {
+//   return validateAssetPath(path);
+// }
+
+// export function validateVideoPath(path) {
+//   return validateAssetPath(path);
+// }
+
+// export function validateAnimationPath(path) {
+//   return validateAssetPath(path);
+// }
+
+// // Test function
+// export function testSecurity() {
+//   const tests = [
+//     { path: "/textures/TexturesCompressed/SoundOn.jpg", expected: true },
+//     { path: "/Objects/Final/avatar.glb", expected: true },
+//     { path: "/videos/ReactFinal.mp4", expected: true },
+//     { path: "/panel_click.mp3", expected: true },
+//     { path: "/fonts/bodoni-mt-bold-italic.ttf", expected: true },
+//     { path: "https://evil.com/hack.glb", expected: false },
+//     { path: "../textures/malicious.jpg", expected: false },
+//   ];
+
+//   let allPassed = true;
+//   console.log("🔒 Running security tests...");
+
+//   tests.forEach((t) => {
+//     const result = validateAssetPath(t.path);
+//     const status = result === t.expected ? "✅" : "❌";
+//     console.log(`${status} ${t.path} → ${result} (expected ${t.expected})`);
+//     if (result !== t.expected) allPassed = false;
+//   });
+
+//   if (allPassed) console.log("\n🎉 ALL SECURITY TESTS PASSED");
+//   else console.warn("\n⚠️ Some tests failed");
+// }
+
+// // Make available globally for debugging
+// if (typeof window !== "undefined") {
+//   window.validateAssetPath = validateAssetPath;
+//   window.validateModelPath = validateModelPath;
+//   window.validateVideoPath = validateVideoPath;
+//   window.validateAnimationPath = validateAnimationPath;
+
+//   if (import.meta.env?.DEV) {
+//     window.testSecurity = testSecurity;
+//   }
+// }
+// 6ος - τελικός
 // Core validation function - always exported first
 export function validateAssetPath(path) {
   if (!path || typeof path !== "string") return false;
@@ -277,8 +532,18 @@ export function validateAssetPath(path) {
     "/models/",
     "/audios/",
     "/fonts/",
+  ];
+
+  // Specific allowed files in root
+  const allowedRootFiles = [
     "/panel_click.mp3",
     "/tv_off.mp3",
+    "/hover.mp3",
+    "/vba.mp4",
+    "/reactfinal.mp4",
+    "/video_imageviewer_com_540p.mp4",
+    "/video_blenderchair.mp4",
+    "/video_moonraker_πάγια-720p.mp4",
   ];
 
   const validExtensions = [
@@ -313,6 +578,11 @@ export function validateAssetPath(path) {
     }
   }
 
+  // Ensure path starts with / for consistent checking
+  if (pathToCheck && !pathToCheck.startsWith("/")) {
+    pathToCheck = "/" + pathToCheck;
+  }
+
   const lowerPathToCheck = pathToCheck.toLowerCase();
 
   // Check if stripped path has allowed prefix
@@ -320,10 +590,15 @@ export function validateAssetPath(path) {
     lowerPathToCheck.startsWith(p.toLowerCase())
   );
 
+  // Check if it's an allowed root file
+  const isAllowedRootFile = allowedRootFiles.some(
+    (f) => lowerPathToCheck === f.toLowerCase()
+  );
+
   // Check extension
   const hasValidExt = validExtensions.some((ext) => lowerPath.endsWith(ext));
 
-  return hasAllowedPrefix && hasValidExt;
+  return (hasAllowedPrefix || isAllowedRootFile) && hasValidExt;
 }
 
 // Wrapper functions - explicitly export as separate functions
