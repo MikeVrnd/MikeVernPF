@@ -114,7 +114,6 @@ export const validateModelPath = (path) => {
     `${window.location.origin}/Objects/Final/JustOneBuildinig_opt_resized_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`,
     `${window.location.origin}/Objects/Final/DoorSign.glb`,
     `${window.location.origin}/Objects/Final/avatar.glb`,
-    `${window.location.origin}/Objects/Final/avatar.glb`,
     `${window.location.origin}/Objects/Final/Arithmodeiktes.glb`,
     `${window.location.origin}/Objects/Final/SkyFinalNoRoof_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`,
     `${window.location.origin}/Objects/Final/PavementFinal6_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb`,
