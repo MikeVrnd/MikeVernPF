@@ -34,8 +34,8 @@ import Tree from "./Trees&Flowers/Tree";
 import Sky from "./Sky";
 import { useFrame } from "@react-three/fiber";
 import DoorSign from "./DoorSign";
-import { validateModelPath, validateAssetPath } from "../../utils/security";
-
+// import { validateModelPath, validateAssetPath } from "../../utils/security";
+import { validateModelPath, validateAssetPath } from "../../utils/security.js";
 export default function Avatar_dev_place({
   setFrameLoopMode,
   props,

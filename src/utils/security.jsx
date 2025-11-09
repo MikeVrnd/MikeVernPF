@@ -204,7 +204,10 @@ export const validateAssetPath = (path) => {
     allowedOrigins.some((origin) => path.startsWith(origin)) ||
     path.startsWith("/");
 
-  const hasAllowedPrefix = allowedPrefixes.some((p) => lowerPath.startsWith(p));
+  // const hasAllowedPrefix = allowedPrefixes.some((p) => lowerPath.startsWith(p));
+  const hasAllowedPrefix =
+    allowedPrefixes.some((p) => lowerPath.startsWith(p)) ||
+    allowedPrefixes.some((p) => path.startsWith(window.location.origin + p));
 
   const hasValidExt = validExtensions.some((ext) => lowerPath.endsWith(ext));
 
