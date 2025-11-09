@@ -24,7 +24,8 @@ import {
   Master,
 } from "../Degrees";
 import { Arithmodeiktes } from "./Arithmodeiktes";
-import { validateModelPath, validateAssetPath } from "../../utils/security";
+import { validateAssetPath, validateModelPath } from "../../utils/security";
+// import { validateModelPath, validateAssetPath } from "../../utils/security";
 export default function Avatar_acc_place({
   setFrameLoopMode,
   props,

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, forwardRef, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useSpring, animated } from "@react-spring/three";
+import { validateAssetPath, validateModelPath } from "../utils/security";
 
 function useBachelorAnimation() {
   const [hovered, setHovered] = useState(false);
