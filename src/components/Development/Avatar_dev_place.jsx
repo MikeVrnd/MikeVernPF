@@ -488,10 +488,10 @@ export default function Avatar_dev_place({
     "/textures/TexturesCompressed/Developer/TV_remote_final7.jpg";
   const textureUrlSign =
     "/textures/TexturesCompressed/Developer/DoorPlate3.jpg";
-  if (!validateAssetPath(textureUrl) || !validateAssetPath(textureUrlSign)) {
-    console.error("Blocked unsafe texture path");
-    return null;
-  }
+  // if (!validateAssetPath(textureUrl) || !validateAssetPath(textureUrlSign)) {
+  //   console.error("Blocked unsafe texture path");
+  //   return null;
+  // }
   const textureremote = useTexture(textureUrl);
   const materials = [
     new THREE.MeshStandardMaterial({ color: "black" }),
