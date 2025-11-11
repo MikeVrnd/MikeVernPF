@@ -138,7 +138,6 @@ function ExitButtonStars({ onClick }) {
   return (
     <group position={[-22, 3, -7.2]}>
       <Sparkles
-        position={[21, 3.5, 5.35]}
         position={[21, 2.1, 5.35]}
         count={20}
         scale={[1.2, 7, 1.2]}

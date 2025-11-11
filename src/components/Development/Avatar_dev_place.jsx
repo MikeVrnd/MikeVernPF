@@ -5,6 +5,7 @@ import React, {
   useState,
   lazy,
   useCallback,
+  startTransition,
 } from "react";
 import { useGraph } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
@@ -59,6 +60,22 @@ const audioManager = {
   },
 };
 
+// Debounce helper to prevent rapid-fire handler calls
+const createDebouncedHandler = (handler, delay = 50) => {
+  let timeoutId;
+  return (...args) => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => handler(...args), delay);
+  };
+};
+
+// Deferred state batch - updates state asynchronously to avoid blocking
+const deferredBatch = (updates) => {
+  requestAnimationFrame(() => {
+    updates();
+  });
+};
+
 export default function Avatar_dev_place({
   setFrameLoopMode,
   props,
@@ -102,7 +119,7 @@ export default function Avatar_dev_place({
     };
   }, [safeAudioPath, safeAudioTVPath]);
 
-  // Helper to batch camera and light updates
+  // Helper to batch camera and light updates - OPTIMIZED for performance
   const setCameraState = useCallback((config) => {
     if (!cameraControlsRef.current) return;
     const {
@@ -117,31 +134,44 @@ export default function Avatar_dev_place({
       polarRotateSpeed,
       dollyToCursor,
       dollySpeed,
+      animate = false,
     } = config;
 
-    if (lookAt) {
-      cameraControlsRef.current.setLookAt(...lookAt, true);
-    }
-    if (minDistance !== undefined)
-      cameraControlsRef.current.minDistance = minDistance;
-    if (maxDistance !== undefined)
-      cameraControlsRef.current.maxDistance = maxDistance;
-    if (minPolar !== undefined)
-      cameraControlsRef.current.minPolarAngle = minPolar;
-    if (maxPolar !== undefined)
-      cameraControlsRef.current.maxPolarAngle = maxPolar;
-    if (minAzimuth !== undefined)
-      cameraControlsRef.current.minAzimuthAngle = minAzimuth;
-    if (maxAzimuth !== undefined)
-      cameraControlsRef.current.maxAzimuthAngle = maxAzimuth;
-    if (azimuthRotateSpeed !== undefined)
-      cameraControlsRef.current.azimuthRotateSpeed = azimuthRotateSpeed;
-    if (polarRotateSpeed !== undefined)
-      cameraControlsRef.current.polarRotateSpeed = polarRotateSpeed;
-    if (dollyToCursor !== undefined)
-      cameraControlsRef.current.dollyToCursor = dollyToCursor;
-    if (dollySpeed !== undefined)
-      cameraControlsRef.current.dollySpeed = dollySpeed;
+    // Defer heavy camera work to next frame
+    requestAnimationFrame(() => {
+      if (!cameraControlsRef.current) return;
+
+      // Set simple properties first (synchronous)
+      if (minDistance !== undefined)
+        cameraControlsRef.current.minDistance = minDistance;
+      if (maxDistance !== undefined)
+        cameraControlsRef.current.maxDistance = maxDistance;
+      if (minPolar !== undefined)
+        cameraControlsRef.current.minPolarAngle = minPolar;
+      if (maxPolar !== undefined)
+        cameraControlsRef.current.maxPolarAngle = maxPolar;
+      if (minAzimuth !== undefined)
+        cameraControlsRef.current.minAzimuthAngle = minAzimuth;
+      if (maxAzimuth !== undefined)
+        cameraControlsRef.current.maxAzimuthAngle = maxAzimuth;
+      if (azimuthRotateSpeed !== undefined)
+        cameraControlsRef.current.azimuthRotateSpeed = azimuthRotateSpeed;
+      if (polarRotateSpeed !== undefined)
+        cameraControlsRef.current.polarRotateSpeed = polarRotateSpeed;
+      if (dollyToCursor !== undefined)
+        cameraControlsRef.current.dollyToCursor = dollyToCursor;
+      if (dollySpeed !== undefined)
+        cameraControlsRef.current.dollySpeed = dollySpeed;
+
+      // Defer the lookAt (expensive) to end of frame
+      if (lookAt) {
+        requestAnimationFrame(() => {
+          if (cameraControlsRef.current) {
+            cameraControlsRef.current.setLookAt(...lookAt, animate);
+          }
+        });
+      }
+    });
   }, []);
 
   const playClickSound = useCallback(() => {
@@ -156,83 +186,107 @@ export default function Avatar_dev_place({
     }
   }, [safeAudioTVPath]);
   const handleClick = useCallback(() => {
-    setShowHouse(true);
-    setShowToggleButton(false);
-    setHideObjects(false);
+    // Play sound immediately (non-blocking)
     playClickSound();
 
-    if (meshRef.current && cameraControlsRef.current) {
-      const meshWorldPosition = new THREE.Vector3();
-      meshRef.current.getWorldPosition(meshWorldPosition);
-      const frontDirection = new THREE.Vector3(0, 0, -1);
-      const meshWorldQuaternion = new THREE.Quaternion();
-      meshRef.current.getWorldQuaternion(meshWorldQuaternion);
-      frontDirection.applyQuaternion(meshWorldQuaternion);
-      const cameraDistance = 19;
-      const xOffset = 0;
-      const yOffset = 6;
-      const cameraPosition = meshWorldPosition
-        .clone()
-        .addScaledVector(frontDirection, -cameraDistance)
-        .add(new THREE.Vector3(xOffset, yOffset, 1));
+    // Defer camera setup
+    setCameraState({
+      lookAt: null,
+      minDistance: 13,
+      maxDistance: 62,
+      azimuthRotateSpeed: 1,
+      minPolar: Math.PI / 2.8,
+      maxPolar: Math.PI / 2.15,
+    });
 
-      setCameraState({
-        lookAt: [
-          cameraPosition.x,
-          cameraPosition.y,
-          cameraPosition.z,
-          meshWorldPosition.x,
-          meshWorldPosition.y,
-          meshWorldPosition.z,
-        ],
-        minDistance: 13,
-        maxDistance: 62,
-        azimuthRotateSpeed: 1,
-        minPolar: Math.PI / 2.8,
-        maxPolar: Math.PI / 2.15,
+    // Calculate camera position and apply it deferred
+    if (meshRef.current && cameraControlsRef.current) {
+      requestAnimationFrame(() => {
+        const meshWorldPosition = new THREE.Vector3();
+        meshRef.current.getWorldPosition(meshWorldPosition);
+        const frontDirection = new THREE.Vector3(0, 0, -1);
+        const meshWorldQuaternion = new THREE.Quaternion();
+        meshRef.current.getWorldQuaternion(meshWorldQuaternion);
+        frontDirection.applyQuaternion(meshWorldQuaternion);
+        const cameraDistance = 19;
+        const xOffset = 0;
+        const yOffset = 6;
+        const cameraPosition = meshWorldPosition
+          .clone()
+          .addScaledVector(frontDirection, -cameraDistance)
+          .add(new THREE.Vector3(xOffset, yOffset, 1));
+
+        setCameraState({
+          lookAt: [
+            cameraPosition.x,
+            cameraPosition.y,
+            cameraPosition.z,
+            meshWorldPosition.x,
+            meshWorldPosition.y,
+            meshWorldPosition.z,
+          ],
+          animate: false,
+        });
       });
     }
+
+    // Defer state updates with startTransition to avoid blocking
+    startTransition(() => {
+      setShowHouse(true);
+      setShowToggleButton(false);
+      setHideObjects(false);
+    });
   }, [setCameraState, playClickSound, setShowToggleButton]);
   const handleExitClick = useCallback(() => {
     playClickSound();
 
-    if (meshRef.current && cameraControlsRef.current) {
-      const meshWorldPosition = new THREE.Vector3();
-      meshRef.current.getWorldPosition(meshWorldPosition);
-      const frontDirection = new THREE.Vector3(0, 0, -1);
-      const meshWorldQuaternion = new THREE.Quaternion();
-      meshRef.current.getWorldQuaternion(meshWorldQuaternion);
-      frontDirection.applyQuaternion(meshWorldQuaternion);
-      const cameraDistance = 15;
-      const xOffset = -3;
-      const yOffset = 5;
-      const targetOffset = new THREE.Vector3(-3, 0, 0);
-      const targetPosition = meshWorldPosition.clone().add(targetOffset);
-      const cameraPosition = meshWorldPosition
-        .clone()
-        .addScaledVector(frontDirection, -cameraDistance)
-        .add(new THREE.Vector3(xOffset, yOffset, 1));
+    // Set basic constraints immediately
+    setCameraState({
+      minDistance: 9,
+      maxDistance: 35,
+      azimuthRotateSpeed: 1,
+    });
 
-      setCameraState({
-        lookAt: [
-          cameraPosition.x,
-          cameraPosition.y,
-          cameraPosition.z,
-          targetPosition.x,
-          targetPosition.y,
-          targetPosition.z,
-        ],
-        minDistance: 9,
-        maxDistance: 35,
-        azimuthRotateSpeed: 1,
+    // Defer calculation and lookAt
+    if (meshRef.current && cameraControlsRef.current) {
+      requestAnimationFrame(() => {
+        const meshWorldPosition = new THREE.Vector3();
+        meshRef.current.getWorldPosition(meshWorldPosition);
+        const frontDirection = new THREE.Vector3(0, 0, -1);
+        const meshWorldQuaternion = new THREE.Quaternion();
+        meshRef.current.getWorldQuaternion(meshWorldQuaternion);
+        frontDirection.applyQuaternion(meshWorldQuaternion);
+        const cameraDistance = 15;
+        const xOffset = -3;
+        const yOffset = 5;
+        const targetOffset = new THREE.Vector3(-3, 0, 0);
+        const targetPosition = meshWorldPosition.clone().add(targetOffset);
+        const cameraPosition = meshWorldPosition
+          .clone()
+          .addScaledVector(frontDirection, -cameraDistance)
+          .add(new THREE.Vector3(xOffset, yOffset, 1));
+
+        setCameraState({
+          lookAt: [
+            cameraPosition.x,
+            cameraPosition.y,
+            cameraPosition.z,
+            targetPosition.x,
+            targetPosition.y,
+            targetPosition.z,
+          ],
+          animate: false,
+        });
       });
     }
 
-    // Batch state updates
-    setShowHouse(false);
-    setShowToggleButton(false);
-    setLightOnDoor(true);
-    setHideObjects(true);
+    // Defer state updates
+    startTransition(() => {
+      setShowHouse(false);
+      setShowToggleButton(false);
+      setLightOnDoor(true);
+      setHideObjects(true);
+    });
   }, [setCameraState, playClickSound, setShowToggleButton]);
   const [showTVMenu, setShowTVMenu] = useState(false);
   const [showRemote, setShowRemote] = useState(false);
@@ -260,16 +314,16 @@ export default function Avatar_dev_place({
       setPrevMaxPolarAngle(cameraControlsRef.current.maxPolarAngle);
     }
 
-    setShowFakeBook(false);
-    setShowBook(true);
+    // Defer state updates
+    startTransition(() => {
+      setShowFakeBook(false);
+      setShowBook(true);
+    });
   }, [setCameraState, playClickSound, setShowToggleButton, prevMaxPolarAngle]);
   const handleClickNavigationGuide = useCallback(() => {
-    setLightOnNavigationGuide(true);
-    setShowToggleButton(false);
     playClickSound();
 
     setCameraState({
-      lookAt: [0.808, 0.0, -5.28, 8.01, -2.89, -1.59],
       minDistance: 8,
       maxDistance: 9.8,
       azimuthRotateSpeed: 1,
@@ -280,68 +334,94 @@ export default function Avatar_dev_place({
       maxAzimuth: Math.PI + Math.PI / 40,
     });
 
-    if (cameraControlsRef.current) {
-      cameraControlsRef.current.rotateTo(
-        Math.PI,
-        cameraControlsRef.current.polarAngle,
-        true
-      );
-    }
+    // Deferred rotation
+    requestAnimationFrame(() => {
+      if (cameraControlsRef.current) {
+        cameraControlsRef.current.rotateTo(
+          Math.PI,
+          cameraControlsRef.current.polarAngle,
+          false
+        );
+        // Set lookAt after rotation
+        requestAnimationFrame(() => {
+          setCameraState({
+            lookAt: [0.808, 0.0, -5.28, 8.01, -2.89, -1.59],
+            animate: false,
+          });
+        });
+      }
+    });
+
+    // Defer state updates
+    startTransition(() => {
+      setLightOnNavigationGuide(true);
+      setShowToggleButton(false);
+    });
   }, [setCameraState, playClickSound, setShowToggleButton]);
   const handleExitProjects = useCallback(() => {
     playTVSound();
 
-    if (meshRef.current && cameraControlsRef.current) {
-      const meshWorldPosition = new THREE.Vector3();
-      meshRef.current.getWorldPosition(meshWorldPosition);
-      const frontDirection = new THREE.Vector3(0, 0, -1);
-      const meshWorldQuaternion = new THREE.Quaternion();
-      meshRef.current.getWorldQuaternion(meshWorldQuaternion);
-      frontDirection.applyQuaternion(meshWorldQuaternion);
-      const cameraDistance = 31.7;
-      const xOffset = 30;
-      const yOffset = 3;
-      const cameraPosition = meshWorldPosition
-        .clone()
-        .addScaledVector(frontDirection, -cameraDistance)
-        .add(new THREE.Vector3(xOffset, yOffset, 4.95));
+    // Set camera constraints immediately
+    setCameraState({
+      minDistance: 13.5,
+      maxDistance: 62,
+      azimuthRotateSpeed: 1,
+      polarRotateSpeed: 1,
+      dollySpeed: 1,
+      dollyToCursor: false,
+      minPolar: Math.PI / 2.8,
+      maxPolar: Math.PI / 2.15,
+      minAzimuth: -Infinity,
+      maxAzimuth: Infinity,
+    });
 
-      setCameraState({
-        lookAt: [
-          cameraPosition.x,
-          cameraPosition.y,
-          cameraPosition.z,
-          meshWorldPosition.x,
-          meshWorldPosition.y,
-          meshWorldPosition.z,
-        ],
-        minDistance: 13.5,
-        maxDistance: 62,
-        azimuthRotateSpeed: 1,
-        polarRotateSpeed: 1,
-        dollySpeed: 1,
-        dollyToCursor: false,
-        minPolar: Math.PI / 2.8,
-        maxPolar: Math.PI / 2.15,
-        minAzimuth: -Infinity,
-        maxAzimuth: Infinity,
+    // Defer camera position calculation
+    if (meshRef.current && cameraControlsRef.current) {
+      requestAnimationFrame(() => {
+        const meshWorldPosition = new THREE.Vector3();
+        meshRef.current.getWorldPosition(meshWorldPosition);
+        const frontDirection = new THREE.Vector3(0, 0, -1);
+        const meshWorldQuaternion = new THREE.Quaternion();
+        meshRef.current.getWorldQuaternion(meshWorldQuaternion);
+        frontDirection.applyQuaternion(meshWorldQuaternion);
+        const cameraDistance = 31.7;
+        const xOffset = 30;
+        const yOffset = 3;
+        const cameraPosition = meshWorldPosition
+          .clone()
+          .addScaledVector(frontDirection, -cameraDistance)
+          .add(new THREE.Vector3(xOffset, yOffset, 4.95));
+
+        setCameraState({
+          lookAt: [
+            cameraPosition.x,
+            cameraPosition.y,
+            cameraPosition.z,
+            meshWorldPosition.x,
+            meshWorldPosition.y,
+            meshWorldPosition.z,
+          ],
+          animate: false,
+        });
       });
     }
 
-    // Batch state updates
-    setShowToggleButton(true);
-    setLightOnWisdomNook(false);
-    setShowTVMenu(false);
-    setShowFakeBook(true);
-    setShowBook(false);
-    setShowRemote(false);
-    setLightOnNavigationGuide(false);
-    setShowHouse(false);
-    setIsVideoPlaying(false);
-    setFrameLoopMode("always");
-    if (prevMaxPolarAngle !== null) {
-      setPrevMaxPolarAngle(null);
-    }
+    // Defer all state updates - lots of them!
+    startTransition(() => {
+      setShowToggleButton(true);
+      setLightOnWisdomNook(false);
+      setShowTVMenu(false);
+      setShowFakeBook(true);
+      setShowBook(false);
+      setShowRemote(false);
+      setLightOnNavigationGuide(false);
+      setShowHouse(false);
+      setIsVideoPlaying(false);
+      setFrameLoopMode("always");
+      if (prevMaxPolarAngle !== null) {
+        setPrevMaxPolarAngle(null);
+      }
+    });
   }, [
     setCameraState,
     playTVSound,
@@ -352,98 +432,119 @@ export default function Avatar_dev_place({
   const handleExitClickStars = useCallback(() => {
     playClickSound();
 
-    setShowToggleButton(true);
-    setLightOnDoor(false);
-    setHideObjects(true);
-    setShowHouse(false);
+    // Set camera constraints immediately
+    setCameraState({
+      minDistance: 46,
+      maxDistance: 66,
+      minAzimuth: -Infinity,
+      maxAzimuth: Infinity,
+      minPolar: Math.PI / 2.8,
+      maxPolar: Math.PI / 2.0,
+    });
 
+    // Defer camera calculation
     if (meshRef.current && cameraControlsRef.current) {
-      const meshWorldPosition = new THREE.Vector3();
-      meshRef.current.getWorldPosition(meshWorldPosition);
-      const frontDirection = new THREE.Vector3(0, 0.05, -1);
-      const meshWorldQuaternion = new THREE.Quaternion();
-      meshRef.current.getWorldQuaternion(meshWorldQuaternion);
-      frontDirection.applyQuaternion(meshWorldQuaternion);
-      const cameraDistance = 35.5;
-      const xOffset = 30;
-      const yOffset = 4.7;
-      const cameraPosition = meshWorldPosition
-        .clone()
-        .addScaledVector(frontDirection, -cameraDistance)
-        .add(new THREE.Vector3(xOffset, yOffset, 1));
+      requestAnimationFrame(() => {
+        const meshWorldPosition = new THREE.Vector3();
+        meshRef.current.getWorldPosition(meshWorldPosition);
+        const frontDirection = new THREE.Vector3(0, 0.05, -1);
+        const meshWorldQuaternion = new THREE.Quaternion();
+        meshRef.current.getWorldQuaternion(meshWorldQuaternion);
+        frontDirection.applyQuaternion(meshWorldQuaternion);
+        const cameraDistance = 35.5;
+        const xOffset = 30;
+        const yOffset = 4.7;
+        const cameraPosition = meshWorldPosition
+          .clone()
+          .addScaledVector(frontDirection, -cameraDistance)
+          .add(new THREE.Vector3(xOffset, yOffset, 1));
 
-      setCameraState({
-        lookAt: [
-          cameraPosition.x,
-          cameraPosition.y,
-          cameraPosition.z,
-          meshWorldPosition.x,
-          meshWorldPosition.y,
-          meshWorldPosition.z,
-        ],
-        minDistance: 46,
-        maxDistance: 66,
-        minAzimuth: -Infinity,
-        maxAzimuth: Infinity,
-        minPolar: Math.PI / 2.8,
-        maxPolar: Math.PI / 2.0,
+        setCameraState({
+          lookAt: [
+            cameraPosition.x,
+            cameraPosition.y,
+            cameraPosition.z,
+            meshWorldPosition.x,
+            meshWorldPosition.y,
+            meshWorldPosition.z,
+          ],
+          animate: false,
+        });
       });
     }
+
+    // Defer state updates
+    startTransition(() => {
+      setShowToggleButton(true);
+      setLightOnDoor(false);
+      setHideObjects(true);
+      setShowHouse(false);
+    });
   }, [setCameraState, playClickSound, setShowToggleButton]);
   const handleExitAboutMeClick = useCallback(() => {
     playClickSound();
 
-    setShowToggleButton(true);
-    setIsVideoPlaying(false);
-    setFrameLoopMode("always");
-    setLightOnWisdomNook(false);
-    setShowTVMenu(false);
-    setShowFakeBook(true);
-    setShowBook(false);
-    setShowRemote(false);
-    setLightOnNavigationGuide(false);
-    setShowHouse(false);
+    // Set camera constraints immediately
+    setCameraState({
+      minDistance: 13.5,
+      maxDistance: 62,
+      minAzimuth: -Infinity,
+      maxAzimuth: Infinity,
+      azimuthRotateSpeed: 1,
+      polarRotateSpeed: 1,
+      dollySpeed: 1,
+      minPolar: Math.PI / 2.8,
+      maxPolar: Math.PI / 2.05,
+      dollyToCursor: false,
+    });
 
+    // Defer camera calculation
     if (meshRef.current && cameraControlsRef.current) {
-      const meshWorldPosition = new THREE.Vector3();
-      meshRef.current.getWorldPosition(meshWorldPosition);
-      const frontDirection = new THREE.Vector3(0, 0, -1);
-      const meshWorldQuaternion = new THREE.Quaternion();
-      meshRef.current.getWorldQuaternion(meshWorldQuaternion);
-      frontDirection.applyQuaternion(meshWorldQuaternion);
-      const cameraDistance = 31.7;
-      const xOffset = 30;
-      const yOffset = 3;
-      const cameraPosition = meshWorldPosition
-        .clone()
-        .addScaledVector(frontDirection, -cameraDistance)
-        .add(new THREE.Vector3(xOffset, yOffset, 4.95));
+      requestAnimationFrame(() => {
+        const meshWorldPosition = new THREE.Vector3();
+        meshRef.current.getWorldPosition(meshWorldPosition);
+        const frontDirection = new THREE.Vector3(0, 0, -1);
+        const meshWorldQuaternion = new THREE.Quaternion();
+        meshRef.current.getWorldQuaternion(meshWorldQuaternion);
+        frontDirection.applyQuaternion(meshWorldQuaternion);
+        const cameraDistance = 31.7;
+        const xOffset = 30;
+        const yOffset = 3;
+        const cameraPosition = meshWorldPosition
+          .clone()
+          .addScaledVector(frontDirection, -cameraDistance)
+          .add(new THREE.Vector3(xOffset, yOffset, 4.95));
 
-      setCameraState({
-        lookAt: [
-          cameraPosition.x,
-          cameraPosition.y,
-          cameraPosition.z,
-          meshWorldPosition.x,
-          meshWorldPosition.y,
-          meshWorldPosition.z,
-        ],
-        minDistance: 13.5,
-        maxDistance: 62,
-        minAzimuth: -Infinity,
-        maxAzimuth: Infinity,
-        azimuthRotateSpeed: 1,
-        polarRotateSpeed: 1,
-        dollySpeed: 1,
-        minPolar: Math.PI / 2.8,
-        maxPolar: Math.PI / 2.05,
-        dollyToCursor: false,
+        setCameraState({
+          lookAt: [
+            cameraPosition.x,
+            cameraPosition.y,
+            cameraPosition.z,
+            meshWorldPosition.x,
+            meshWorldPosition.y,
+            meshWorldPosition.z,
+          ],
+          animate: false,
+        });
       });
     }
 
-    if (prevMaxPolarAngle !== null) {
-      setPrevMaxPolarAngle(null);
-    }
+    // Defer lots of state updates
+    startTransition(() => {
+      setShowToggleButton(true);
+      setIsVideoPlaying(false);
+      setFrameLoopMode("always");
+      setLightOnWisdomNook(false);
+      setShowTVMenu(false);
+      setShowFakeBook(true);
+      setShowBook(false);
+      setShowRemote(false);
+      setLightOnNavigationGuide(false);
+      setShowHouse(false);
+      if (prevMaxPolarAngle !== null) {
+        setPrevMaxPolarAngle(null);
+      }
+    });
   }, [
     setCameraState,
     playClickSound,
@@ -452,47 +553,57 @@ export default function Avatar_dev_place({
     prevMaxPolarAngle,
   ]);
   const handleClickSide = useCallback(() => {
-    setShowToggleButton(false);
-    setIsVideoPlaying(true);
-    setFrameLoopMode("demand");
     playClickSound();
 
-    if (cameraControlsRef.current) {
-      const meshPosition = new THREE.Vector3(3.9, -0.4, -2.8);
-      const cameraOffset = new THREE.Vector3(-5, 0.3, 0);
-      const targetPosition = meshPosition.clone().add(cameraOffset);
-      const lookAtTarget = meshPosition.clone();
+    // Set camera constraints immediately
+    setCameraState({
+      minDistance: 1.5,
+      maxDistance: 5.4,
+      azimuthRotateSpeed: 1,
+      minAzimuth: (260 * Math.PI) / 180,
+      maxAzimuth: (320 * Math.PI) / 180,
+      polarRotateSpeed: 1,
+      dollyToCursor: false,
+      minPolar: Math.PI / 2.1,
+      maxPolar: Math.PI / 2.05,
+    });
 
-      setCameraState({
-        lookAt: [
-          targetPosition.x,
-          targetPosition.y,
-          targetPosition.z,
-          lookAtTarget.x,
-          lookAtTarget.y,
-          lookAtTarget.z,
-        ],
-        minDistance: 1.5,
-        maxDistance: 5.4,
-        azimuthRotateSpeed: 1,
-        minAzimuth: (260 * Math.PI) / 180,
-        maxAzimuth: (320 * Math.PI) / 180,
-        polarRotateSpeed: 1,
-        dollyToCursor: false,
-        minPolar: Math.PI / 2.1,
-        maxPolar: Math.PI / 2.05,
+    // Defer camera position calculation
+    if (cameraControlsRef.current) {
+      requestAnimationFrame(() => {
+        const meshPosition = new THREE.Vector3(3.9, -0.4, -2.8);
+        const cameraOffset = new THREE.Vector3(-5, 0.3, 0);
+        const targetPosition = meshPosition.clone().add(cameraOffset);
+        const lookAtTarget = meshPosition.clone();
+
+        setCameraState({
+          lookAt: [
+            targetPosition.x,
+            targetPosition.y,
+            targetPosition.z,
+            lookAtTarget.x,
+            lookAtTarget.y,
+            lookAtTarget.z,
+          ],
+          animate: false,
+        });
       });
     }
 
-    setShowTVMenu(true);
-    setShowRemote(true);
+    // Defer state updates
+    startTransition(() => {
+      setShowToggleButton(false);
+      setIsVideoPlaying(true);
+      setFrameLoopMode("demand");
+      setShowTVMenu(true);
+      setShowRemote(true);
+    });
   }, [setCameraState, playClickSound, setShowToggleButton, setFrameLoopMode]);
 
   const handleClickTrophies = useCallback(() => {
-    setShowToggleButton(false);
-    setLightOnWisdomNook(!lightOnWisdomNook);
     playClickSound();
 
+    // Set camera constraints immediately
     if (cameraControlsRef.current) {
       const meshPosition = new THREE.Vector3(-4.22, -0.5, 0.3);
       const cameraOffset = new THREE.Vector3(2.5, 0, 0);
@@ -515,8 +626,15 @@ export default function Avatar_dev_place({
         maxPolar: Math.PI / 2.05,
         minAzimuth: (82 * Math.PI) / 180,
         maxAzimuth: (120 * Math.PI) / 180,
+        animate: false,
       });
     }
+
+    // Defer state updates
+    startTransition(() => {
+      setShowToggleButton(false);
+      setLightOnWisdomNook(!lightOnWisdomNook);
+    });
   }, [setCameraState, playClickSound, setShowToggleButton, lightOnWisdomNook]);
 
   // All hooks must be at the top - moved here to fix conditional hook calls
