@@ -167,7 +167,7 @@ export default function Avatar_dev_place({
       if (lookAt) {
         requestAnimationFrame(() => {
           if (cameraControlsRef.current) {
-            cameraControlsRef.current.setLookAt(...lookAt, animate,true);
+            cameraControlsRef.current.setLookAt(...lookAt, animate,transitionDuration );
           }
         });
       }
