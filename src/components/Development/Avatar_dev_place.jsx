@@ -167,7 +167,7 @@ export default function Avatar_dev_place({
       if (lookAt) {
         requestAnimationFrame(() => {
           if (cameraControlsRef.current) {
-            cameraControlsRef.current.setLookAt(...lookAt, animate);
+            cameraControlsRef.current.setLookAt(...lookAt, animate,true);
           }
         });
       }
@@ -197,6 +197,7 @@ export default function Avatar_dev_place({
       azimuthRotateSpeed: 1,
       minPolar: Math.PI / 2.8,
       maxPolar: Math.PI / 2.15,
+      true
     });
 
     // Calculate camera position and apply it deferred
