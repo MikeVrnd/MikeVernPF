@@ -351,7 +351,7 @@ export default function Avatar_dev_place({
         // Set lookAt after rotation
         requestAnimationFrame(() => {
           setCameraState({
-            lookAt: [0.808, 0.0, -5.28, 8.01, -2.89, -1.59],
+            lookAt: [8.01, -1.2, -10.28, 8.01, -2.89, -1.59],
             animate: ENABLE_SMOOTH_CAMERA,
           });
         });
