@@ -1,4 +1,11 @@
-import React, { Suspense, useEffect, useRef, useState, lazy } from "react";
+import React, {
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+  lazy,
+  useCallback,
+} from "react";
 import { useGraph } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
@@ -36,6 +43,22 @@ import { useFrame } from "@react-three/fiber";
 import DoorSign from "./DoorSign";
 // import { validateModelPath, validateAssetPath } from "../../utils/security";
 import { validateModelPath, validateAssetPath } from "../../utils/security";
+
+// Audio manager to prevent multiple instances
+const audioManager = {
+  currentSound: null,
+  playSound(path) {
+    if (this.currentSound) {
+      this.currentSound.pause();
+    }
+    this.currentSound = new Audio(path);
+    this.currentSound.volume = 0.5;
+    this.currentSound
+      .play()
+      .catch((err) => console.log("Sound play error:", err));
+  },
+};
+
 export default function Avatar_dev_place({
   setFrameLoopMode,
   props,
@@ -60,25 +83,16 @@ export default function Avatar_dev_place({
   const safeAudioPath = validateAssetPath("/panel_click.mp3")
     ? "/panel_click.mp3"
     : null;
-  useEffect(() => {
-    if (!safeAudioPath) {
-      console.error("Blocked unsafe audio path");
-      return;
-    }
-    return () => {
-      if (hoverSoundRef.current) {
-        hoverSoundRef.current.pause();
-        hoverSoundRef.current = null;
-      }
-    };
-  }, []);
   const safeAudioTVPath = validateAssetPath("/tv_off.mp3")
     ? "/tv_off.mp3"
     : null;
+
   useEffect(() => {
+    if (!safeAudioPath) {
+      console.error("Blocked unsafe audio path");
+    }
     if (!safeAudioTVPath) {
       console.error("Blocked unsafe audio path");
-      return;
     }
     return () => {
       if (hoverSoundRef.current) {
@@ -86,11 +100,67 @@ export default function Avatar_dev_place({
         hoverSoundRef.current = null;
       }
     };
+  }, [safeAudioPath, safeAudioTVPath]);
+
+  // Helper to batch camera and light updates
+  const setCameraState = useCallback((config) => {
+    if (!cameraControlsRef.current) return;
+    const {
+      lookAt,
+      minDistance,
+      maxDistance,
+      minPolar,
+      maxPolar,
+      minAzimuth,
+      maxAzimuth,
+      azimuthRotateSpeed,
+      polarRotateSpeed,
+      dollyToCursor,
+      dollySpeed,
+    } = config;
+
+    if (lookAt) {
+      cameraControlsRef.current.setLookAt(...lookAt, true);
+    }
+    if (minDistance !== undefined)
+      cameraControlsRef.current.minDistance = minDistance;
+    if (maxDistance !== undefined)
+      cameraControlsRef.current.maxDistance = maxDistance;
+    if (minPolar !== undefined)
+      cameraControlsRef.current.minPolarAngle = minPolar;
+    if (maxPolar !== undefined)
+      cameraControlsRef.current.maxPolarAngle = maxPolar;
+    if (minAzimuth !== undefined)
+      cameraControlsRef.current.minAzimuthAngle = minAzimuth;
+    if (maxAzimuth !== undefined)
+      cameraControlsRef.current.maxAzimuthAngle = maxAzimuth;
+    if (azimuthRotateSpeed !== undefined)
+      cameraControlsRef.current.azimuthRotateSpeed = azimuthRotateSpeed;
+    if (polarRotateSpeed !== undefined)
+      cameraControlsRef.current.polarRotateSpeed = polarRotateSpeed;
+    if (dollyToCursor !== undefined)
+      cameraControlsRef.current.dollyToCursor = dollyToCursor;
+    if (dollySpeed !== undefined)
+      cameraControlsRef.current.dollySpeed = dollySpeed;
   }, []);
-  const handleClick = () => {
+
+  const playClickSound = useCallback(() => {
+    if (safeAudioPath) {
+      audioManager.playSound(safeAudioPath);
+    }
+  }, [safeAudioPath]);
+
+  const playTVSound = useCallback(() => {
+    if (safeAudioTVPath) {
+      audioManager.playSound(safeAudioTVPath);
+    }
+  }, [safeAudioTVPath]);
+  const handleClick = useCallback(() => {
     setShowHouse(true);
     setShowToggleButton(false);
     setHideObjects(false);
+    playClickSound();
+
     if (meshRef.current && cameraControlsRef.current) {
       const meshWorldPosition = new THREE.Vector3();
       meshRef.current.getWorldPosition(meshWorldPosition);
@@ -105,33 +175,27 @@ export default function Avatar_dev_place({
         .clone()
         .addScaledVector(frontDirection, -cameraDistance)
         .add(new THREE.Vector3(xOffset, yOffset, 1));
-      cameraControlsRef.current.setLookAt(
-        cameraPosition.x,
-        cameraPosition.y,
-        cameraPosition.z,
-        meshWorldPosition.x,
-        meshWorldPosition.y,
-        meshWorldPosition.z,
-        true
-      );
-    }
-    cameraControlsRef.current.minDistance = 13;
-    cameraControlsRef.current.maxDistance = 62;
-    cameraControlsRef.current.azimuthRotateSpeed = 1;
-    cameraControlsRef.current.minPolarAngle = Math.PI / 2.8;
-    cameraControlsRef.current.maxPolarAngle = Math.PI / 2.15;
 
-    if (safeAudioPath) {
-      const clickSound = new Audio(safeAudioPath);
-      clickSound.volume = 0.5;
-      clickSound.play().catch((err) => console.log("Sound play error:", err));
+      setCameraState({
+        lookAt: [
+          cameraPosition.x,
+          cameraPosition.y,
+          cameraPosition.z,
+          meshWorldPosition.x,
+          meshWorldPosition.y,
+          meshWorldPosition.z,
+        ],
+        minDistance: 13,
+        maxDistance: 62,
+        azimuthRotateSpeed: 1,
+        minPolar: Math.PI / 2.8,
+        maxPolar: Math.PI / 2.15,
+      });
     }
-  };
-  const handleExitClick = () => {
-    setShowHouse(false);
-    setShowToggleButton(false);
-    setLightOnDoor(true);
-    setHideObjects(true);
+  }, [setCameraState, playClickSound, setShowToggleButton]);
+  const handleExitClick = useCallback(() => {
+    playClickSound();
+
     if (meshRef.current && cameraControlsRef.current) {
       const meshWorldPosition = new THREE.Vector3();
       meshRef.current.getWorldPosition(meshWorldPosition);
@@ -148,110 +212,85 @@ export default function Avatar_dev_place({
         .clone()
         .addScaledVector(frontDirection, -cameraDistance)
         .add(new THREE.Vector3(xOffset, yOffset, 1));
-      cameraControlsRef.current.setLookAt(
-        cameraPosition.x,
-        cameraPosition.y,
-        cameraPosition.z,
-        targetPosition.x,
-        targetPosition.y,
-        targetPosition.z,
-        true
-      );
-      cameraControlsRef.current.minDistance = 9;
-      cameraControlsRef.current.maxDistance = 35;
-      cameraControlsRef.current.azimuthRotateSpeed = 1;
+
+      setCameraState({
+        lookAt: [
+          cameraPosition.x,
+          cameraPosition.y,
+          cameraPosition.z,
+          targetPosition.x,
+          targetPosition.y,
+          targetPosition.z,
+        ],
+        minDistance: 9,
+        maxDistance: 35,
+        azimuthRotateSpeed: 1,
+      });
     }
 
-    if (safeAudioPath) {
-      const clickSound = new Audio(safeAudioPath);
-      clickSound.volume = 0.5;
-      clickSound.play().catch((err) => console.log("Sound play error:", err));
-    }
-  };
+    // Batch state updates
+    setShowHouse(false);
+    setShowToggleButton(false);
+    setLightOnDoor(true);
+    setHideObjects(true);
+  }, [setCameraState, playClickSound, setShowToggleButton]);
   const [showTVMenu, setShowTVMenu] = useState(false);
   const [showRemote, setShowRemote] = useState(false);
   const [prevMaxPolarAngle, setPrevMaxPolarAngle] = useState(null);
-  {
-    /* παρακάτω η επικάλυψη του βιβλίου */
-  }
   const [showFakeBook, setShowFakeBook] = useState(true);
   const cubeRef = useRef();
-  {
-    /* μέχρι εδώ η επικάλυψη του βιβλίου */
-  }
   const [showBook, setShowBook] = useState(false);
-  const handleClickAboutMe = () => {
-    setShowToggleButton(false);
-    if (cameraControlsRef.current) {
-      const targetPosition = new THREE.Vector3(0, 0.5, -3.5);
-      const lookAtTarget = new THREE.Vector3(0, -1.5, -2.4);
-      cameraControlsRef.current.setLookAt(
-        targetPosition.x,
-        targetPosition.y,
-        targetPosition.z,
-        lookAtTarget.x,
-        lookAtTarget.y,
-        lookAtTarget.z,
-        true
-      );
-      if (prevMaxPolarAngle === null) {
-        setPrevMaxPolarAngle(cameraControlsRef.current.maxPolarAngle);
-      }
-      cameraControlsRef.current.minDistance = 0.2;
-      cameraControlsRef.current.maxDistance = 2.5;
-      cameraControlsRef.current.azimuthRotateSpeed = 0;
-      cameraControlsRef.current.dollySpeed = 1;
-    }
-    setShowFakeBook(false);
-    setShowBook(true); //Βιβλίο με σελίδες
-    cameraControlsRef.current.dollyToCursor = true;
-    cameraControlsRef.current.minPolarAngle = Math.PI / 20;
-    cameraControlsRef.current.maxPolarAngle = Math.PI / 6;
 
-    if (safeAudioPath) {
-      const clickSound = new Audio(safeAudioPath);
-      clickSound.volume = 0.5;
-      clickSound.play().catch((err) => console.log("Sound play error:", err));
+  const handleClickAboutMe = useCallback(() => {
+    setShowToggleButton(false);
+    playClickSound();
+
+    setCameraState({
+      lookAt: [0, 0.5, -3.5, 0, -1.5, -2.4],
+      minDistance: 0.2,
+      maxDistance: 2.5,
+      azimuthRotateSpeed: 0,
+      dollySpeed: 1,
+      dollyToCursor: true,
+      minPolar: Math.PI / 20,
+      maxPolar: Math.PI / 6,
+    });
+
+    if (prevMaxPolarAngle === null && cameraControlsRef.current) {
+      setPrevMaxPolarAngle(cameraControlsRef.current.maxPolarAngle);
     }
-  };
-  const handleClickNavigationGuide = () => {
+
+    setShowFakeBook(false);
+    setShowBook(true);
+  }, [setCameraState, playClickSound, setShowToggleButton, prevMaxPolarAngle]);
+  const handleClickNavigationGuide = useCallback(() => {
     setLightOnNavigationGuide(true);
-    setShowToggleButton(false); // για εμφάνιση button μέρα/νύχτα
+    setShowToggleButton(false);
+    playClickSound();
+
+    setCameraState({
+      lookAt: [0.808, 0.0, -5.28, 8.01, -2.89, -1.59],
+      minDistance: 8,
+      maxDistance: 9.8,
+      azimuthRotateSpeed: 1,
+      dollyToCursor: true,
+      minPolar: Math.PI / 2.4,
+      maxPolar: Math.PI / 2.3,
+      minAzimuth: Math.PI - Math.PI / 40,
+      maxAzimuth: Math.PI + Math.PI / 40,
+    });
+
     if (cameraControlsRef.current) {
-      cameraControlsRef.current.setLookAt(
-        0.808,
-        0.0,
-        -5.28,
-        8.01,
-        -2.89,
-        -1.59,
-        true
-      );
-      cameraControlsRef.current.minDistance = 8;
-      cameraControlsRef.current.maxDistance = 9.8;
-      cameraControlsRef.current.azimuthRotateSpeed = 1;
-      cameraControlsRef.current.dollyToCursor = true;
-      cameraControlsRef.current.minPolarAngle = Math.PI / 2.4;
-      cameraControlsRef.current.maxPolarAngle = Math.PI / 2.3;
-      const centerAzimuth = Math.PI;
-      const halfRange = Math.PI / 40;
-      cameraControlsRef.current.minAzimuthAngle = centerAzimuth - halfRange;
-      cameraControlsRef.current.maxAzimuthAngle = centerAzimuth + halfRange;
       cameraControlsRef.current.rotateTo(
         Math.PI,
         cameraControlsRef.current.polarAngle,
         true
       );
     }
+  }, [setCameraState, playClickSound, setShowToggleButton]);
+  const handleExitProjects = useCallback(() => {
+    playTVSound();
 
-    if (safeAudioPath) {
-      const clickSound = new Audio(safeAudioPath);
-      clickSound.volume = 0.5;
-      clickSound.play().catch((err) => console.log("Sound play error:", err));
-    }
-  };
-  const handleExitProjects = () => {
-    setShowToggleButton(true); // για απόκρυψη button μέρα/νύχτα
     if (meshRef.current && cameraControlsRef.current) {
       const meshWorldPosition = new THREE.Vector3();
       meshRef.current.getWorldPosition(meshWorldPosition);
@@ -266,51 +305,58 @@ export default function Avatar_dev_place({
         .clone()
         .addScaledVector(frontDirection, -cameraDistance)
         .add(new THREE.Vector3(xOffset, yOffset, 4.95));
-      cameraControlsRef.current.setLookAt(
-        cameraPosition.x,
-        cameraPosition.y,
-        cameraPosition.z,
-        meshWorldPosition.x,
-        meshWorldPosition.y,
-        meshWorldPosition.z,
-        true
-      );
-      cameraControlsRef.current.minDistance = 13.5;
-      cameraControlsRef.current.maxDistance = 62;
+
+      setCameraState({
+        lookAt: [
+          cameraPosition.x,
+          cameraPosition.y,
+          cameraPosition.z,
+          meshWorldPosition.x,
+          meshWorldPosition.y,
+          meshWorldPosition.z,
+        ],
+        minDistance: 13.5,
+        maxDistance: 62,
+        azimuthRotateSpeed: 1,
+        polarRotateSpeed: 1,
+        dollySpeed: 1,
+        dollyToCursor: false,
+        minPolar: Math.PI / 2.8,
+        maxPolar: Math.PI / 2.15,
+        minAzimuth: -Infinity,
+        maxAzimuth: Infinity,
+      });
     }
-    cameraControlsRef.current.azimuthRotateSpeed = 1;
-    cameraControlsRef.current.polarRotateSpeed = 1;
-    cameraControlsRef.current.dollySpeed = 1;
-    cameraControlsRef.current.dollyToCursor = false;
-    if (cameraControlsRef.current && prevMaxPolarAngle !== null) {
-      cameraControlsRef.current.maxPolarAngle = prevMaxPolarAngle;
-      setPrevMaxPolarAngle(null);
-    }
-    cameraControlsRef.current.minPolarAngle = Math.PI / 2.8;
-    cameraControlsRef.current.maxPolarAngle = Math.PI / 2.15;
-    cameraControlsRef.current.minAzimuthAngle = -Infinity;
-    cameraControlsRef.current.maxAzimuthAngle = Infinity;
+
+    // Batch state updates
+    setShowToggleButton(true);
     setLightOnWisdomNook(false);
     setShowTVMenu(false);
     setShowFakeBook(true);
-    setShowBook(false); // Πραγματικό βιβλίο με σελίδες
+    setShowBook(false);
     setShowRemote(false);
     setLightOnNavigationGuide(false);
     setShowHouse(false);
-    setShowToggleButton(true); // για απόκρυψη button μέρα/νύχτα
     setIsVideoPlaying(false);
     setFrameLoopMode("always");
-
-    if (safeAudioTVPath) {
-      const clickSound = new Audio(safeAudioTVPath);
-      clickSound.volume = 0.5;
-      clickSound.play().catch((err) => console.log("Sound play error:", err));
+    if (prevMaxPolarAngle !== null) {
+      setPrevMaxPolarAngle(null);
     }
-  };
-  const handleExitClickStars = () => {
+  }, [
+    setCameraState,
+    playTVSound,
+    setShowToggleButton,
+    setFrameLoopMode,
+    prevMaxPolarAngle,
+  ]);
+  const handleExitClickStars = useCallback(() => {
+    playClickSound();
+
     setShowToggleButton(true);
     setLightOnDoor(false);
     setHideObjects(true);
+    setShowHouse(false);
+
     if (meshRef.current && cameraControlsRef.current) {
       const meshWorldPosition = new THREE.Vector3();
       meshRef.current.getWorldPosition(meshWorldPosition);
@@ -325,34 +371,39 @@ export default function Avatar_dev_place({
         .clone()
         .addScaledVector(frontDirection, -cameraDistance)
         .add(new THREE.Vector3(xOffset, yOffset, 1));
-      cameraControlsRef.current.setLookAt(
-        cameraPosition.x,
-        cameraPosition.y,
-        cameraPosition.z,
-        meshWorldPosition.x,
-        meshWorldPosition.y,
-        meshWorldPosition.z,
-        true
-      );
-      cameraControlsRef.current.minDistance = 46;
-      cameraControlsRef.current.maxDistance = 66;
-      cameraControlsRef.current.minAzimuthAngle = -Infinity;
-      cameraControlsRef.current.maxAzimuthAngle = Infinity;
-    }
-    cameraControlsRef.current.minPolarAngle = Math.PI / 2.8;
-    cameraControlsRef.current.maxPolarAngle = Math.PI / 2.0;
-    setShowHouse(false);
 
-    if (safeAudioPath) {
-      const clickSound = new Audio(safeAudioPath);
-      clickSound.volume = 0.5;
-      clickSound.play().catch((err) => console.log("Sound play error:", err));
+      setCameraState({
+        lookAt: [
+          cameraPosition.x,
+          cameraPosition.y,
+          cameraPosition.z,
+          meshWorldPosition.x,
+          meshWorldPosition.y,
+          meshWorldPosition.z,
+        ],
+        minDistance: 46,
+        maxDistance: 66,
+        minAzimuth: -Infinity,
+        maxAzimuth: Infinity,
+        minPolar: Math.PI / 2.8,
+        maxPolar: Math.PI / 2.0,
+      });
     }
-  };
-  const handleExitAboutMeClick = () => {
-    setShowToggleButton(true); // για απόκρυψη button μέρα/νύχτα
+  }, [setCameraState, playClickSound, setShowToggleButton]);
+  const handleExitAboutMeClick = useCallback(() => {
+    playClickSound();
+
+    setShowToggleButton(true);
     setIsVideoPlaying(false);
     setFrameLoopMode("always");
+    setLightOnWisdomNook(false);
+    setShowTVMenu(false);
+    setShowFakeBook(true);
+    setShowBook(false);
+    setShowRemote(false);
+    setLightOnNavigationGuide(false);
+    setShowHouse(false);
+
     if (meshRef.current && cameraControlsRef.current) {
       const meshWorldPosition = new THREE.Vector3();
       meshRef.current.getWorldPosition(meshWorldPosition);
@@ -367,133 +418,190 @@ export default function Avatar_dev_place({
         .clone()
         .addScaledVector(frontDirection, -cameraDistance)
         .add(new THREE.Vector3(xOffset, yOffset, 4.95));
-      cameraControlsRef.current.setLookAt(
-        cameraPosition.x,
-        cameraPosition.y,
-        cameraPosition.z,
-        meshWorldPosition.x,
-        meshWorldPosition.y,
-        meshWorldPosition.z,
-        true
-      );
-      cameraControlsRef.current.minDistance = 13.5;
-      cameraControlsRef.current.maxDistance = 62;
-      cameraControlsRef.current.minAzimuthAngle = -Infinity;
-      cameraControlsRef.current.maxAzimuthAngle = Infinity;
-    }
-    cameraControlsRef.current.azimuthRotateSpeed = 1;
-    cameraControlsRef.current.polarRotateSpeed = 1;
-    cameraControlsRef.current.dollySpeed = 1;
 
-    if (cameraControlsRef.current && prevMaxPolarAngle !== null) {
-      cameraControlsRef.current.maxPolarAngle = prevMaxPolarAngle;
+      setCameraState({
+        lookAt: [
+          cameraPosition.x,
+          cameraPosition.y,
+          cameraPosition.z,
+          meshWorldPosition.x,
+          meshWorldPosition.y,
+          meshWorldPosition.z,
+        ],
+        minDistance: 13.5,
+        maxDistance: 62,
+        minAzimuth: -Infinity,
+        maxAzimuth: Infinity,
+        azimuthRotateSpeed: 1,
+        polarRotateSpeed: 1,
+        dollySpeed: 1,
+        minPolar: Math.PI / 2.8,
+        maxPolar: Math.PI / 2.05,
+        dollyToCursor: false,
+      });
+    }
+
+    if (prevMaxPolarAngle !== null) {
       setPrevMaxPolarAngle(null);
     }
-    cameraControlsRef.current.minPolarAngle = Math.PI / 2.8;
-    cameraControlsRef.current.maxPolarAngle = Math.PI / 2.05;
-    setLightOnWisdomNook(false);
-    setShowTVMenu(false);
-    setShowFakeBook(true);
-    setShowBook(false);
-    setShowRemote(false);
-    setLightOnNavigationGuide(false);
-    cameraControlsRef.current.dollyToCursor = false;
-    setShowHouse(false);
-
-    if (safeAudioPath) {
-      const clickSound = new Audio(safeAudioPath);
-      clickSound.volume = 0.5;
-      clickSound.play().catch((err) => console.log("Sound play error:", err));
-    }
-  };
-  const handleClickSide = () => {
+  }, [
+    setCameraState,
+    playClickSound,
+    setShowToggleButton,
+    setFrameLoopMode,
+    prevMaxPolarAngle,
+  ]);
+  const handleClickSide = useCallback(() => {
     setShowToggleButton(false);
     setIsVideoPlaying(true);
     setFrameLoopMode("demand");
+    playClickSound();
 
     if (cameraControlsRef.current) {
       const meshPosition = new THREE.Vector3(3.9, -0.4, -2.8);
       const cameraOffset = new THREE.Vector3(-5, 0.3, 0);
       const targetPosition = meshPosition.clone().add(cameraOffset);
       const lookAtTarget = meshPosition.clone();
-      cameraControlsRef.current.setLookAt(
-        targetPosition.x,
-        targetPosition.y,
-        targetPosition.z,
-        lookAtTarget.x,
-        lookAtTarget.y,
-        lookAtTarget.z,
-        true
-      );
 
-      cameraControlsRef.current.minDistance = 1.5;
-      cameraControlsRef.current.maxDistance = 5.4;
+      setCameraState({
+        lookAt: [
+          targetPosition.x,
+          targetPosition.y,
+          targetPosition.z,
+          lookAtTarget.x,
+          lookAtTarget.y,
+          lookAtTarget.z,
+        ],
+        minDistance: 1.5,
+        maxDistance: 5.4,
+        azimuthRotateSpeed: 1,
+        minAzimuth: (260 * Math.PI) / 180,
+        maxAzimuth: (320 * Math.PI) / 180,
+        polarRotateSpeed: 1,
+        dollyToCursor: false,
+        minPolar: Math.PI / 2.1,
+        maxPolar: Math.PI / 2.05,
+      });
     }
 
-    cameraControlsRef.current.azimuthRotateSpeed = 1;
-    cameraControlsRef.current.minAzimuthAngle = (260 * Math.PI) / 180;
-    cameraControlsRef.current.maxAzimuthAngle = (320 * Math.PI) / 180;
-
-    cameraControlsRef.current.polarRotateSpeed = 1;
-    cameraControlsRef.current.dollyToCursor = false;
-    cameraControlsRef.current.minPolarAngle = Math.PI / 2.1;
-    cameraControlsRef.current.maxPolarAngle = Math.PI / 2.05;
     setShowTVMenu(true);
     setShowRemote(true);
+  }, [setCameraState, playClickSound, setShowToggleButton, setFrameLoopMode]);
 
-    if (safeAudioPath) {
-      const clickSound = new Audio(safeAudioPath);
-      clickSound.volume = 0.5;
-      clickSound.play().catch((err) => console.log("Sound play error:", err));
-    }
-  };
-
-  const handleClickTrophies = () => {
-    setShowToggleButton(false); // για εμφάνιση button μέρα/νύχτα
+  const handleClickTrophies = useCallback(() => {
+    setShowToggleButton(false);
     setLightOnWisdomNook(!lightOnWisdomNook);
+    playClickSound();
+
     if (cameraControlsRef.current) {
       const meshPosition = new THREE.Vector3(-4.22, -0.5, 0.3);
       const cameraOffset = new THREE.Vector3(2.5, 0, 0);
       const targetPosition = meshPosition.clone().add(cameraOffset);
       const lookAtTarget = meshPosition.clone();
-      cameraControlsRef.current.setLookAt(
-        targetPosition.x,
-        targetPosition.y,
-        targetPosition.z,
-        lookAtTarget.x,
-        lookAtTarget.y,
-        lookAtTarget.z,
-        true
-      );
-      setTimeout(() => {
-        const newCameraPosition = new THREE.Vector3();
-        cameraControlsRef.current.getPosition(newCameraPosition);
-      }, 100);
-      cameraControlsRef.current.minDistance = 1.5;
-      cameraControlsRef.current.maxDistance = 3.92;
-      cameraControlsRef.current.dollyToCursor = true;
-      cameraControlsRef.current.minPolarAngle = Math.PI / 2.4;
-      cameraControlsRef.current.maxPolarAngle = Math.PI / 2.05;
-      cameraControlsRef.current.minAzimuthAngle = (82 * Math.PI) / 180;
-      cameraControlsRef.current.maxAzimuthAngle = (120 * Math.PI) / 180;
-    }
 
-    if (safeAudioPath) {
-      const clickSound = new Audio(safeAudioPath);
-      clickSound.volume = 0.5;
-      clickSound.play().catch((err) => console.log("Sound play error:", err));
+      setCameraState({
+        lookAt: [
+          targetPosition.x,
+          targetPosition.y,
+          targetPosition.z,
+          lookAtTarget.x,
+          lookAtTarget.y,
+          lookAtTarget.z,
+        ],
+        minDistance: 1.5,
+        maxDistance: 3.92,
+        dollyToCursor: true,
+        minPolar: Math.PI / 2.4,
+        maxPolar: Math.PI / 2.05,
+        minAzimuth: (82 * Math.PI) / 180,
+        maxAzimuth: (120 * Math.PI) / 180,
+      });
     }
-  };
+  }, [setCameraState, playClickSound, setShowToggleButton, lightOnWisdomNook]);
+
+  // All hooks must be at the top - moved here to fix conditional hook calls
+  const group = useRef();
+  const textRef = useRef();
 
   const textureUrl =
     "/textures/TexturesCompressed/Developer/TV_remote_final7.jpg";
   const textureUrlSign =
     "/textures/TexturesCompressed/Developer/DoorPlate3.jpg";
-  if (!validateAssetPath(textureUrl) || !validateAssetPath(textureUrlSign)) {
-    console.error("Blocked unsafe texture path");
-    return null;
-  }
-  const textureremote = useTexture(textureUrl);
+  const modelPath = `${window.location.origin}/Objects/Final/avatar.glb`;
+  const texturePath = "/textures/book-cover.jpg";
+  const fontPath = "/fonts/bodoni-mt-bold-italic.ttf";
+  const fontPathSec = "/fonts/frenchscriptmt.ttf";
+  const fontPathThird = "/fonts/Cookie-Regular.ttf";
+  const fontPathFourth = "/fonts/DeliusSwashCaps-Regular.ttf";
+  const fontPathFifth = "/fonts/Spartacus-KVdLp.ttf";
+
+  // Validate paths - but use a flag rather than early return
+  const isTextureUrlValid =
+    validateAssetPath(textureUrl) && validateAssetPath(textureUrlSign);
+  const isModelPathValid = validateModelPath(modelPath);
+  const isTexturePathValid = validateAssetPath(texturePath);
+  const areFontsValid = [
+    fontPath,
+    fontPathSec,
+    fontPathThird,
+    fontPathFourth,
+    fontPathFifth,
+  ].every((path) => validateAssetPath(path));
+
+  // Load assets only if valid
+  const textureremote = useTexture(
+    isTextureUrlValid
+      ? textureUrl
+      : "/textures/TexturesCompressed/Developer/TV_remote_final7.jpg"
+  );
+  const textureremotesign = useTexture(
+    isTextureUrlValid
+      ? textureUrlSign
+      : "/textures/TexturesCompressed/Developer/DoorPlate3.jpg"
+  );
+  const { scene: modelScene } = useGLTF(
+    isModelPathValid ? modelPath : "/Objects/Final/avatar.glb"
+  );
+  const bookTexture = useTexture(
+    isTexturePathValid ? texturePath : "/textures/book-cover.jpg"
+  );
+
+  const clone = React.useMemo(
+    () => SkeletonUtils.clone(modelScene),
+    [modelScene]
+  );
+  const { nodes } = useGraph(clone);
+
+  useFrame(({ clock }) => {
+    if (textRef.current && textRef.current.material) {
+      textRef.current.material.emissiveIntensity =
+        1 + Math.sin(clock.getElapsedTime() * 2) * 1.1;
+    }
+  });
+
+  // Log validation errors without early returns
+  useEffect(() => {
+    if (!isTextureUrlValid) {
+      console.error("Blocked unsafe texture paths for remote");
+    }
+    if (!isModelPathValid) {
+      console.error("Blocked unsafe model path:", modelPath);
+    }
+    if (!isTexturePathValid) {
+      console.error("Blocked unsafe texture path:", texturePath);
+    }
+    if (!areFontsValid) {
+      console.error("Blocked unsafe font paths");
+    }
+  }, [
+    isTextureUrlValid,
+    isModelPathValid,
+    isTexturePathValid,
+    areFontsValid,
+    modelPath,
+    texturePath,
+  ]);
+
   const materials = [
     new THREE.MeshStandardMaterial({ color: "black" }),
     new THREE.MeshStandardMaterial({ color: "black" }),
@@ -502,7 +610,6 @@ export default function Avatar_dev_place({
     new THREE.MeshStandardMaterial({ color: "black" }),
     new THREE.MeshStandardMaterial({ color: "black" }),
   ];
-  const textureremotesign = useTexture(textureUrlSign);
   const materialsign = [
     new THREE.MeshStandardMaterial({ color: "black" }),
     new THREE.MeshStandardMaterial({ color: "black" }),
@@ -514,58 +621,6 @@ export default function Avatar_dev_place({
     new THREE.MeshStandardMaterial({ color: "black" }),
     new THREE.MeshStandardMaterial({ color: "black" }),
   ];
-  const group = useRef();
-  const modelPath = `${window.location.origin}/Objects/Final/avatar.glb`;
-  const texturePath = "/textures/book-cover.jpg";
-
-  if (!validateModelPath(modelPath)) {
-    console.error("Blocked unsafe model path:", modelPath);
-    return null;
-  }
-
-  if (!validateAssetPath(texturePath)) {
-    console.error("Blocked unsafe texture path:", texturePath);
-    return null;
-  }
-
-  const { scene } = useGLTF(modelPath);
-
-  const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
-  const { nodes } = useGraph(clone);
-  const texture = useTexture(texturePath);
-
-  const textRef = useRef();
-  useFrame(({ clock }) => {
-    if (textRef.current) {
-      textRef.current.material.emissiveIntensity =
-        1 + Math.sin(clock.getElapsedTime() * 2) * 1.1;
-    }
-  });
-  const fontPath = "/fonts/bodoni-mt-bold-italic.ttf";
-  const fontPathSec = "/fonts/frenchscriptmt.ttf";
-  const fontPathThird = "/fonts/Cookie-Regular.ttf";
-  const fontPathFourth = "/fonts/DeliusSwashCaps-Regular.ttf";
-  const fontPathFifth = "/fonts/Spartacus-KVdLp.ttf";
-  if (!validateAssetPath(fontPath)) {
-    console.error("Blocked unsafe font path:", fontPath);
-    return null;
-  }
-  if (!validateAssetPath(fontPathSec)) {
-    console.error("Blocked unsafe font path:", fontPathSec);
-    return null;
-  }
-  if (!validateAssetPath(fontPathThird)) {
-    console.error("Blocked unsafe font path:", fontPathThird);
-    return null;
-  }
-  if (!validateAssetPath(fontPathFourth)) {
-    console.error("Blocked unsafe font path:", fontPathFourth);
-    return null;
-  }
-  if (!validateAssetPath(fontPathFifth)) {
-    console.error("Blocked unsafe font path:", fontPathFifth);
-    return null;
-  }
 
   return (
     <>
@@ -588,7 +643,7 @@ export default function Avatar_dev_place({
           rotation={[0, Math.PI / 2, Math.PI / 2]}
         >
           <boxGeometry args={[0.01, 0.48, 0.32]} />
-          <meshBasicMaterial map={texture} />
+          <meshBasicMaterial map={bookTexture} />
         </mesh>
         {/* μέχρι εδώ η επικάλυψη του βιβλίου */}
         {/* παρακάτω το remote */}
