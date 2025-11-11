@@ -309,12 +309,12 @@ function App() {
               src={
                 validateAssetPath(
                   isDay
-                    ? "/textures/TexturesCompressed/Sun.png"
-                    : "/textures/TexturesCompressed/Moon.png"
+                    ? "/textures/TexturesCompressed/Sun.webp"
+                    : "/textures/TexturesCompressed/Moon.webp"
                 )
                   ? isDay
-                    ? "/textures/TexturesCompressed/Sun.png"
-                    : "/textures/TexturesCompressed/Moon.png"
+                    ? "/textures/TexturesCompressed/Sun.webp"
+                    : "/textures/TexturesCompressed/Moon.webp"
                   : "/fallback-safe.jpg"
               }
               alt={isDay ? "Sun Icon" : "Moon Icon"}
@@ -325,12 +325,12 @@ function App() {
               src={
                 validateAssetPath(
                   isSoundMuted
-                    ? "/textures/TexturesCompressed/SoundOff.jpg"
-                    : "/textures/TexturesCompressed/SoundOn.jpg"
+                    ? "/textures/TexturesCompressed/SoundOff.webp"
+                    : "/textures/TexturesCompressed/SoundOn.webp"
                 )
                   ? isSoundMuted
-                    ? "/textures/TexturesCompressed/SoundOff.jpg"
-                    : "/textures/TexturesCompressed/SoundOn.jpg"
+                    ? "/textures/TexturesCompressed/SoundOff.webp"
+                    : "/textures/TexturesCompressed/SoundOn.webp"
                   : "/fallback-safe.jpg"
               }
               alt={isSoundMuted ? "Sound Off" : "Sound On"}

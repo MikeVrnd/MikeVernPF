@@ -8,7 +8,7 @@ import React, {
   startTransition,
 } from "react";
 import { useGraph } from "@react-three/fiber";
-import { useGLTF } from "@react-three/drei";
+import { Html, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 import { Text } from "@react-three/drei";
 import Scene from "./Scene";
@@ -27,7 +27,8 @@ import TVMenu from "./TVMenu/TVMenu";
 import DevPlaceKtx2 from "./DevPlaceKtx2";
 import Pavement from "./Pavement";
 import { useTexture } from "@react-three/drei";
-import Avatar from "../Avatar";
+// import Avatar from "../Avatar";
+const Avatar = React.lazy(() => import("../Avatar.jsx"));
 import Frames from "./Frames";
 import {
   Bachelor,
@@ -751,11 +752,21 @@ export default function Avatar_dev_place({
       <group {...props} ref={group} dispose={null}>
         <group rotation-x={-Math.PI / 2}>
           <primitive object={nodes.Hips} />
-          <Avatar
-            animation="Typing"
-            position={[0, 0.075, 0.05]}
-            rotation={[0, 0, 0]}
-          />
+          <Suspense
+            fallback={
+              <Html>
+                <span>Loading may take a moment... </span>
+              </Html>
+            }
+          >
+            {showHouse && (
+              <Avatar
+                animation="Typing"
+                position={[0.15, 3.68, -0.035]}
+                rotation={[0, 0, 0]}
+              />
+            )}
+          </Suspense>
           {/* Παρακάτω προστίθεται η σκηνή χωρίς το */}
         </group>
         <ambientLight intensity={0.2} />

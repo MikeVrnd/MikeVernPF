@@ -550,6 +550,7 @@ export function validateAssetPath(path) {
     ".jpg",
     ".jpeg",
     ".png",
+    "webp",
     ".ktx2",
     ".mp4",
     ".webm",

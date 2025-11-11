@@ -719,7 +719,7 @@
 //     </group>
 //   );
 // }
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useGraph } from "@react-three/fiber";
 import { useGLTF, useTexture } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
@@ -730,7 +730,7 @@ import { HouseAccountant } from "./HouseAccountant";
 import { Book_accountant } from "./Book_accountant";
 import AccPlaceKtx2 from "./AccPlaceKtx2";
 import Building from "./Building";
-import Avatar from "../Avatar";
+// import Avatar from "../Avatar";
 import BuildingsWhite from "./BuildingsWhite";
 import Tree from "./Tree";
 import PCAccountant from "./PCAccountant";
@@ -746,13 +746,13 @@ import {
 } from "../Degrees";
 import { Arithmodeiktes } from "./Arithmodeiktes";
 import { validateModelPath, validateAssetPath } from "../../utils/security";
-
 export default function Avatar_acc_place({
   setFrameLoopMode,
   props,
   setShowToggleButton,
   onRequestNightDisposal,
 }) {
+  const Avatar = React.lazy(() => import("../Avatar.jsx"));
   const cameraControlsRef = useRef();
   const meshRefInitial = useRef();
   const meshRef = useRef();
@@ -1079,13 +1079,21 @@ export default function Avatar_acc_place({
       <group rotation-x={-Math.PI / 2}>
         <ambientLight intensity={2.5} />
         <primitive object={nodes.Hips} />
-        {showHouse && (
-          <Avatar
-            animation="Typing"
-            position={[0.15, 3.68, -0.035]}
-            rotation={[0, 0, 0]}
-          />
-        )}
+        <Suspense
+          fallback={
+            <Html>
+              <span>Loading may take a moment... </span>
+            </Html>
+          }
+        >
+          {showHouse && (
+            <Avatar
+              animation="Typing"
+              position={[0.15, 3.68, -0.035]}
+              rotation={[0, 0, 0]}
+            />
+          )}
+        </Suspense>
       </group>
       {!showHouse && (
         <Text
@@ -1405,7 +1413,7 @@ export default function Avatar_acc_place({
       {showHouse && <Ink />}
       <BuildingsWhite />
       <Tree />
-      {showHouse && <Bachelor />}
+      <Bachelor />
       <Proficiency />
       <LogisthsAtaxhs />
       <Deutsch />

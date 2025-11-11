@@ -1,4 +1,4 @@
-<head>
+<!-- <head>
   <meta
     http-equiv="Content-Security-Policy"
     content="default-src 'self';
@@ -8,4 +8,27 @@
                  media-src 'self' blob:;
                  font-src 'self';"
   />
+</head> -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self';
+             script-src 'self' 'unsafe-eval';
+             style-src 'self' 'unsafe-inline';
+             img-src 'self' data: blob:;
+             media-src 'self' blob:;
+             font-src 'self';"
+  />
+
+  <!-- Preload critical CSS to unblock LCP -->
+  <link rel="preload" href="/assets/index-BoahKvOa.css" as="style" />
+  <link rel="stylesheet" href="/assets/index-BoahKvOa.css" />
+
+  <!-- Preload hero image if LCP element is an image -->
+  <link rel="preload" as="image" href="/path/to/hero.webp" />
+
+  <!-- Defer JS to avoid blocking main thread -->
+  <script type="module" src="/assets/index-fikfZT2D.js" defer></script>
 </head>
