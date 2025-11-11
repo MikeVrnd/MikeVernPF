@@ -19,6 +19,9 @@ CameraControlsImpl.install({ THREE });
 const Book = lazy(() =>
   import("./Book").then((mod) => ({ default: mod.Book }))
 );
+// Global toggle to enable smooth camera transitions after click.
+// Set to `false` to prioritize lowest INP (instant camera moves).
+const ENABLE_SMOOTH_CAMERA = true;
 import LightsOffBloom from "./LightsOffBloom";
 import TVMenu from "./TVMenu/TVMenu";
 import DevPlaceKtx2 from "./DevPlaceKtx2";
@@ -81,6 +84,8 @@ export default function Avatar_dev_place({
   props,
   setShowToggleButton,
 }) {
+  // NOTE: camera smoothing toggle is defined at module level as ENABLE_SMOOTH_CAMERA
+
   const hoverSoundRef = useRef(null);
   const cameraControlsRef = useRef();
   const meshRefInitial = useRef();
@@ -167,7 +172,7 @@ export default function Avatar_dev_place({
       if (lookAt) {
         requestAnimationFrame(() => {
           if (cameraControlsRef.current) {
-            cameraControlsRef.current.setLookAt(...lookAt, animate,transitionDuration );
+            cameraControlsRef.current.setLookAt(...lookAt, animate);
           }
         });
       }
@@ -197,7 +202,6 @@ export default function Avatar_dev_place({
       azimuthRotateSpeed: 1,
       minPolar: Math.PI / 2.8,
       maxPolar: Math.PI / 2.15,
-      true
     });
 
     // Calculate camera position and apply it deferred
@@ -226,7 +230,7 @@ export default function Avatar_dev_place({
             meshWorldPosition.y,
             meshWorldPosition.z,
           ],
-          animate: false,
+          animate: ENABLE_SMOOTH_CAMERA,
         });
       });
     }
@@ -276,7 +280,7 @@ export default function Avatar_dev_place({
             targetPosition.y,
             targetPosition.z,
           ],
-          animate: false,
+          animate: ENABLE_SMOOTH_CAMERA,
         });
       });
     }
@@ -309,6 +313,7 @@ export default function Avatar_dev_place({
       dollyToCursor: true,
       minPolar: Math.PI / 20,
       maxPolar: Math.PI / 6,
+      animate: ENABLE_SMOOTH_CAMERA,
     });
 
     if (prevMaxPolarAngle === null && cameraControlsRef.current) {
@@ -347,7 +352,7 @@ export default function Avatar_dev_place({
         requestAnimationFrame(() => {
           setCameraState({
             lookAt: [0.808, 0.0, -5.28, 8.01, -2.89, -1.59],
-            animate: false,
+            animate: ENABLE_SMOOTH_CAMERA,
           });
         });
       }
@@ -402,7 +407,7 @@ export default function Avatar_dev_place({
             meshWorldPosition.y,
             meshWorldPosition.z,
           ],
-          animate: false,
+          animate: ENABLE_SMOOTH_CAMERA,
         });
       });
     }
@@ -469,7 +474,7 @@ export default function Avatar_dev_place({
             meshWorldPosition.y,
             meshWorldPosition.z,
           ],
-          animate: false,
+          animate: ENABLE_SMOOTH_CAMERA,
         });
       });
     }
@@ -525,7 +530,7 @@ export default function Avatar_dev_place({
             meshWorldPosition.y,
             meshWorldPosition.z,
           ],
-          animate: false,
+          animate: ENABLE_SMOOTH_CAMERA,
         });
       });
     }
@@ -586,7 +591,7 @@ export default function Avatar_dev_place({
             lookAtTarget.y,
             lookAtTarget.z,
           ],
-          animate: false,
+          animate: ENABLE_SMOOTH_CAMERA,
         });
       });
     }
@@ -627,7 +632,7 @@ export default function Avatar_dev_place({
         maxPolar: Math.PI / 2.05,
         minAzimuth: (82 * Math.PI) / 180,
         maxAzimuth: (120 * Math.PI) / 180,
-        animate: false,
+        animate: ENABLE_SMOOTH_CAMERA,
       });
     }
 
