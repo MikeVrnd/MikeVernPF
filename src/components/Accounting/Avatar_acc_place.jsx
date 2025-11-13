@@ -721,7 +721,7 @@
 // }
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useGraph } from "@react-three/fiber";
-import { useGLTF, useTexture } from "@react-three/drei";
+import { Html, useGLTF, useTexture } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 import { Text } from "@react-three/drei";
 import { CameraControls } from "@react-three/drei";
