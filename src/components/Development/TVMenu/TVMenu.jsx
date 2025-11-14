@@ -186,7 +186,7 @@ const TVMenu = forwardRef((props, ref) => {
                 color="white"
                 anchorX="center"
                 anchorY="middle"
-                visible={true}
+                visible={false}
                 // transparent
                 onPointerOver={() => (document.body.style.cursor = "pointer")}
                 onPointerOut={() => (document.body.style.cursor = "default")}
@@ -205,7 +205,7 @@ const TVMenu = forwardRef((props, ref) => {
             color="white"
             anchorX="center"
             anchorY="middle"
-            visible={true}
+            visible={false}
             // transparent
             onPointerOver={() => (document.body.style.cursor = "pointer")}
             onPointerOut={() => (document.body.style.cursor = "default")}
@@ -221,7 +221,7 @@ const TVMenu = forwardRef((props, ref) => {
             color="white"
             anchorX="center"
             anchorY="middle"
-            visible={true}
+            visible={false}
             scale={1.3}
             // transparent
             onPointerOver={() => (document.body.style.cursor = "pointer")}
@@ -239,7 +239,7 @@ const TVMenu = forwardRef((props, ref) => {
             color="white"
             anchorX="center"
             anchorY="middle"
-            visible={true}
+            visible={false}
             transparent
             onPointerOver={() => (document.body.style.cursor = "pointer")}
             onPointerOut={() => (document.body.style.cursor = "default")}

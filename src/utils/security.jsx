@@ -539,11 +539,14 @@ export function validateAssetPath(path) {
     "/panel_click.mp3",
     "/tv_off.mp3",
     "/hover.mp3",
+    "/doink.mp3",
     "/vba.mp4",
     "/reactfinal.mp4",
     "/video_imageviewer_com_540p.mp4",
     "/video_blenderchair.mp4",
     "/video_moonraker_πάγια-720p.mp4",
+    "/little_birds_singing_day.mp3",
+    "/summer_night_crickets_night.mp3",
   ];
 
   const validExtensions = [

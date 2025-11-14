@@ -721,7 +721,7 @@
 // }
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useGraph } from "@react-three/fiber";
-import { Html, useGLTF, useTexture } from "@react-three/drei";
+import { Html, useGLTF, useProgress, useTexture } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 import { Text } from "@react-three/drei";
 import { CameraControls } from "@react-three/drei";
@@ -908,7 +908,7 @@ export default function Avatar_acc_place({
         true
       );
       cameraControlsRef.current.dollySpeed = 1;
-      cameraControlsRef.current.minDistance = 0;
+      cameraControlsRef.current.minDistance = 5;
       cameraControlsRef.current.maxDistance = 32;
     }
     cameraControlsRef.current.minPolarAngle = Math.PI / 2.58;
@@ -1073,19 +1073,13 @@ export default function Avatar_acc_place({
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes } = useGraph(clone);
   const texture = useTexture(texturePath);
-
+  const { progress } = useProgress();
   return (
     <group {...props} ref={group} dispose={null}>
       <group rotation-x={-Math.PI / 2}>
         <ambientLight intensity={2.5} />
         <primitive object={nodes.Hips} />
-        <Suspense
-          fallback={
-            <Html>
-              <span>Loading may take a moment... </span>
-            </Html>
-          }
-        >
+        <Suspense>
           {showHouse && (
             <Avatar
               animation="Typing"

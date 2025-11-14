@@ -1,5 +1,5 @@
 import React, { useState, useEffect, forwardRef, useRef } from "react";
-import { useGLTF } from "@react-three/drei";
+import { Html, useGLTF } from "@react-three/drei";
 import { useSpring, animated } from "@react-spring/three";
 import { validateModelPath, validateAssetPath } from "../../utils/security";
 
@@ -181,6 +181,24 @@ const Portrait = forwardRef((props, ref) => {
           />
         </animated.group>
       </animated.group>
+      {hovered && (
+        <Html position={[-2, 3, 0]}>
+          <div
+            style={{
+              width: 125,
+              color: "white",
+              background: "black",
+              padding: "10px",
+              borderRadius: "10px",
+              fontSize: "14px",
+              textAlign: "center",
+              fontFamily: "'Delius Swash Caps', cursive",
+            }}
+          >
+            My pencil-drawn wife
+          </div>
+        </Html>
+      )}
     </group>
   );
 });
