@@ -22,10 +22,6 @@ const Book = lazy(() =>
 // Global toggle to enable smooth camera transitions after click.
 // Set to `false` to prioritize lowest INP (instant camera moves).
 const ENABLE_SMOOTH_CAMERA = true;
-import LightsOffBloom from "./LightsOffBloom";
-import TVMenu from "./TVMenu/TVMenu";
-import DevPlaceKtx2 from "./DevPlaceKtx2";
-import Pavement from "./Pavement";
 import { useTexture } from "@react-three/drei";
 // import Avatar from "../Avatar";
 const Avatar = React.lazy(() => import("../Avatar.jsx"));
@@ -46,9 +42,15 @@ import Tree from "./Trees&Flowers/Tree";
 import Sky from "./Sky";
 import { useFrame } from "@react-three/fiber";
 import DoorSign from "./DoorSign";
-// import { validateModelPath, validateAssetPath } from "../../utils/security";
+// import LightsOffBloom from "./LightsOffBloom";
+import TVMenu from "./TVMenu/TVMenu";
+// import DevPlaceKtx2 from "./DevPlaceKtx2";
+// import Pavement from "./Pavement";
 import { validateModelPath, validateAssetPath } from "../../utils/security";
-
+const DevPlaceKtx2 = React.lazy(() => import("./DevPlaceKtx2.jsx"));
+const Pavement = React.lazy(() => import("./Pavement.jsx"));
+// const TVMenu = React.lazy(() => import("./TVMenu.jsx"));
+const LightsOffBloom = React.lazy(() => import("./LightsOffBloom.jsx"));
 // Audio manager to prevent multiple instances
 const audioManager = {
   currentSound: null,
@@ -762,7 +764,7 @@ export default function Avatar_dev_place({
             {showHouse && (
               <Avatar
                 animation="Typing"
-                position={[0.15, 3.68, -0.035]}
+                position={[0.0, 0.0, 0.05]}
                 rotation={[0, 0, 0]}
               />
             )}
