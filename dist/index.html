@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+    <link rel="icon" type="image/svg+xml" href="/Portfolio.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mike Vrnd</title>
+    <script type="module" crossorigin src="/assets/index-BWg5LSEW.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BoahKvOa.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Provide a small global fallback for validateModelPath to avoid runtime ReferenceError
+         in case modules that export it haven't initialized yet (safe, minimal check). -->
+    <script>
+      if (typeof window !== "undefined" && !window.validateModelPath) {
+        window.validateModelPath = function (p) {
+          try {
+            if (!p || typeof p !== "string") return false;
+            const lower = p.toLowerCase();
+            if (lower.includes("..") || lower.includes("//")) return false;
+            return (
+              lower.endsWith(".glb") ||
+              lower.endsWith(".gltf") ||
+              lower.endsWith(".fbx")
+            );
+          } catch (e) {
+            return false;
+          }
+        };
+      }
+    </script>
+  </body>
+</html>
