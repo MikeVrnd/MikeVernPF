@@ -11,7 +11,7 @@ export default function AccPlaceKtx2({ visible = true, onLoad }) {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe 3D model:", modelPath);
     return null;
-  } // μέχρι εδώ
+  }
 
   const { nodes, materials, scene } = useLoader(
     GLTFLoader,

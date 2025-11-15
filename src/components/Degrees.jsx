@@ -379,6 +379,5 @@ const Master = forwardRef((props, ref) => {
   );
 });
 
-// Preload model
 export { Bachelor, Proficiency, LogisthsAtaxhs, Deutsch, Master };
 useGLTF.preload(modelPath);

@@ -116,8 +116,6 @@ const InstancedMeshGroup = ({ data, geometry, material }) => {
 const InstancedRightSide = ({ nodes, materials }) => {
   return (
     <>
-      {/* Δεξιά πλευρά */}
-
       <InstancedMeshGroup
         data={BuildingHigherRight}
         geometry={nodes.Building1.geometry}

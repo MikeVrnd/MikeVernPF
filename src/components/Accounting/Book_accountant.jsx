@@ -105,7 +105,6 @@ const Page = ({ number, front, back, page, opened, bookClosed, ...props }) => {
     return null;
   }
 
-  // KEEP ORIGINAL CODE
   const [picture, picture2, pictureRoughness] = useTexture([
     `/textures/${front}.jpg`,
     `/textures/${back}.jpg`,

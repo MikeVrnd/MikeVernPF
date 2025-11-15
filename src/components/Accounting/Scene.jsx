@@ -11,7 +11,7 @@ export default function Scene({ onLoad }) {
     console.error("Blocked unsafe model path:", modelPath);
     return null;
   }
-  const ktx2Loader = useSharedKTX2Loader(); // Use shared loader
+  const ktx2Loader = useSharedKTX2Loader();
   const { nodes, materials, animations, scene } = useLoader(
     GLTFLoader,
     modelPath,

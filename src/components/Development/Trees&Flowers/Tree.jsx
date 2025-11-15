@@ -135,7 +135,6 @@ const LODInstancedTree = ({ scene, data, position }) => {
         const originalGeometry = child.geometry.clone();
         const material = child.material.clone();
 
-        // LOD Level 0 (High detail) - Original geometry
         const highDetail = {
           geometry: originalGeometry,
           material: material.clone(),

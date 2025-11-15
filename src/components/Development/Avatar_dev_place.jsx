@@ -19,8 +19,6 @@ CameraControlsImpl.install({ THREE });
 const Book = lazy(() =>
   import("./Book").then((mod) => ({ default: mod.Book }))
 );
-// Global toggle to enable smooth camera transitions after click.
-// Set to `false` to prioritize lowest INP (instant camera moves).
 const ENABLE_SMOOTH_CAMERA = true;
 import { useTexture } from "@react-three/drei";
 // import Avatar from "../Avatar";
@@ -49,9 +47,7 @@ import TVMenu from "./TVMenu/TVMenu";
 import { validateModelPath, validateAssetPath } from "../../utils/security";
 const DevPlaceKtx2 = React.lazy(() => import("./DevPlaceKtx2.jsx"));
 const Pavement = React.lazy(() => import("./Pavement.jsx"));
-// const TVMenu = React.lazy(() => import("./TVMenu.jsx"));
 const LightsOffBloom = React.lazy(() => import("./LightsOffBloom.jsx"));
-// Audio manager to prevent multiple instances
 const audioManager = {
   currentSound: null,
   playSound(path) {
@@ -66,29 +62,11 @@ const audioManager = {
   },
 };
 
-// Debounce helper to prevent rapid-fire handler calls
-const createDebouncedHandler = (handler, delay = 50) => {
-  let timeoutId;
-  return (...args) => {
-    if (timeoutId) clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => handler(...args), delay);
-  };
-};
-
-// Deferred state batch - updates state asynchronously to avoid blocking
-const deferredBatch = (updates) => {
-  requestAnimationFrame(() => {
-    updates();
-  });
-};
-
 export default function Avatar_dev_place({
   setFrameLoopMode,
   props,
   setShowToggleButton,
 }) {
-  // NOTE: camera smoothing toggle is defined at module level as ENABLE_SMOOTH_CAMERA
-
   const hoverSoundRef = useRef(null);
   const cameraControlsRef = useRef();
   const meshRefInitial = useRef();
@@ -127,7 +105,6 @@ export default function Avatar_dev_place({
     };
   }, [safeAudioPath, safeAudioTVPath]);
 
-  // Helper to batch camera and light updates - OPTIMIZED for performance
   const setCameraState = useCallback((config) => {
     if (!cameraControlsRef.current) return;
     const {
@@ -145,11 +122,9 @@ export default function Avatar_dev_place({
       animate = false,
     } = config;
 
-    // Defer heavy camera work to next frame
     requestAnimationFrame(() => {
       if (!cameraControlsRef.current) return;
 
-      // Set simple properties first (synchronous)
       if (minDistance !== undefined)
         cameraControlsRef.current.minDistance = minDistance;
       if (maxDistance !== undefined)
@@ -171,7 +146,6 @@ export default function Avatar_dev_place({
       if (dollySpeed !== undefined)
         cameraControlsRef.current.dollySpeed = dollySpeed;
 
-      // Defer the lookAt (expensive) to end of frame
       if (lookAt) {
         requestAnimationFrame(() => {
           if (cameraControlsRef.current) {
@@ -194,10 +168,7 @@ export default function Avatar_dev_place({
     }
   }, [safeAudioTVPath]);
   const handleClick = useCallback(() => {
-    // Play sound immediately (non-blocking)
     playClickSound();
-
-    // Defer camera setup
     setCameraState({
       lookAt: null,
       minDistance: 13,
@@ -207,7 +178,6 @@ export default function Avatar_dev_place({
       maxPolar: Math.PI / 2.15,
     });
 
-    // Calculate camera position and apply it deferred
     if (meshRef.current && cameraControlsRef.current) {
       requestAnimationFrame(() => {
         const meshWorldPosition = new THREE.Vector3();
@@ -238,7 +208,6 @@ export default function Avatar_dev_place({
       });
     }
 
-    // Defer state updates with startTransition to avoid blocking
     startTransition(() => {
       setShowHouse(true);
       setShowToggleButton(false);
@@ -248,14 +217,12 @@ export default function Avatar_dev_place({
   const handleExitClick = useCallback(() => {
     playClickSound();
 
-    // Set basic constraints immediately
     setCameraState({
       minDistance: 9,
       maxDistance: 35,
       azimuthRotateSpeed: 1,
     });
 
-    // Defer calculation and lookAt
     if (meshRef.current && cameraControlsRef.current) {
       requestAnimationFrame(() => {
         const meshWorldPosition = new THREE.Vector3();
@@ -288,7 +255,6 @@ export default function Avatar_dev_place({
       });
     }
 
-    // Defer state updates
     startTransition(() => {
       setShowHouse(false);
       setShowToggleButton(false);
@@ -323,12 +289,14 @@ export default function Avatar_dev_place({
       setPrevMaxPolarAngle(cameraControlsRef.current.maxPolarAngle);
     }
 
-    // Defer state updates
     startTransition(() => {
       setShowFakeBook(false);
       setShowBook(true);
+      setShowToggleButton(false);
+      setFrameLoopMode("demand");
     });
-  }, [setCameraState, playClickSound, setShowToggleButton, prevMaxPolarAngle]);
+  }, [setCameraState, playClickSound, setShowToggleButton, setFrameLoopMode]);
+
   const handleClickNavigationGuide = useCallback(() => {
     playClickSound();
 
@@ -343,7 +311,6 @@ export default function Avatar_dev_place({
       maxAzimuth: Math.PI + Math.PI / 40,
     });
 
-    // Deferred rotation
     requestAnimationFrame(() => {
       if (cameraControlsRef.current) {
         cameraControlsRef.current.rotateTo(
@@ -351,7 +318,7 @@ export default function Avatar_dev_place({
           cameraControlsRef.current.polarAngle,
           false
         );
-        // Set lookAt after rotation
+
         requestAnimationFrame(() => {
           setCameraState({
             lookAt: [8.01, -1.2, -10.28, 8.01, -2.89, -1.59],
@@ -360,8 +327,6 @@ export default function Avatar_dev_place({
         });
       }
     });
-
-    // Defer state updates
     startTransition(() => {
       setLightOnNavigationGuide(true);
       setShowToggleButton(false);
@@ -370,7 +335,6 @@ export default function Avatar_dev_place({
   const handleExitProjects = useCallback(() => {
     playTVSound();
 
-    // Set camera constraints immediately
     setCameraState({
       minDistance: 13.5,
       maxDistance: 62,
@@ -384,7 +348,6 @@ export default function Avatar_dev_place({
       maxAzimuth: Infinity,
     });
 
-    // Defer camera position calculation
     if (meshRef.current && cameraControlsRef.current) {
       requestAnimationFrame(() => {
         const meshWorldPosition = new THREE.Vector3();
@@ -414,8 +377,6 @@ export default function Avatar_dev_place({
         });
       });
     }
-
-    // Defer all state updates - lots of them!
     startTransition(() => {
       setShowToggleButton(true);
       setLightOnWisdomNook(false);
@@ -441,7 +402,6 @@ export default function Avatar_dev_place({
   const handleExitClickStars = useCallback(() => {
     playClickSound();
 
-    // Set camera constraints immediately
     setCameraState({
       minDistance: 46,
       maxDistance: 66,
@@ -451,7 +411,6 @@ export default function Avatar_dev_place({
       maxPolar: Math.PI / 2.0,
     });
 
-    // Defer camera calculation
     if (meshRef.current && cameraControlsRef.current) {
       requestAnimationFrame(() => {
         const meshWorldPosition = new THREE.Vector3();
@@ -482,7 +441,6 @@ export default function Avatar_dev_place({
       });
     }
 
-    // Defer state updates
     startTransition(() => {
       setShowToggleButton(true);
       setLightOnDoor(false);
@@ -493,7 +451,6 @@ export default function Avatar_dev_place({
   const handleExitAboutMeClick = useCallback(() => {
     playClickSound();
 
-    // Set camera constraints immediately
     setCameraState({
       minDistance: 13.5,
       maxDistance: 62,
@@ -507,7 +464,6 @@ export default function Avatar_dev_place({
       dollyToCursor: false,
     });
 
-    // Defer camera calculation
     if (meshRef.current && cameraControlsRef.current) {
       requestAnimationFrame(() => {
         const meshWorldPosition = new THREE.Vector3();
@@ -538,7 +494,6 @@ export default function Avatar_dev_place({
       });
     }
 
-    // Defer lots of state updates
     startTransition(() => {
       setShowToggleButton(true);
       setIsVideoPlaying(false);
@@ -564,7 +519,6 @@ export default function Avatar_dev_place({
   const handleClickSide = useCallback(() => {
     playClickSound();
 
-    // Set camera constraints immediately
     setCameraState({
       minDistance: 1.5,
       maxDistance: 5.4,
@@ -577,7 +531,6 @@ export default function Avatar_dev_place({
       maxPolar: Math.PI / 2.05,
     });
 
-    // Defer camera position calculation
     if (cameraControlsRef.current) {
       requestAnimationFrame(() => {
         const meshPosition = new THREE.Vector3(3.9, -0.4, -2.8);
@@ -599,7 +552,6 @@ export default function Avatar_dev_place({
       });
     }
 
-    // Defer state updates
     startTransition(() => {
       setShowToggleButton(false);
       setIsVideoPlaying(true);
@@ -612,7 +564,6 @@ export default function Avatar_dev_place({
   const handleClickTrophies = useCallback(() => {
     playClickSound();
 
-    // Set camera constraints immediately
     if (cameraControlsRef.current) {
       const meshPosition = new THREE.Vector3(-4.22, -0.5, 0.3);
       const cameraOffset = new THREE.Vector3(2.5, 0, 0);
@@ -639,14 +590,19 @@ export default function Avatar_dev_place({
       });
     }
 
-    // Defer state updates
     startTransition(() => {
       setShowToggleButton(false);
       setLightOnWisdomNook(!lightOnWisdomNook);
+      setFrameLoopMode("demand");
     });
-  }, [setCameraState, playClickSound, setShowToggleButton, lightOnWisdomNook]);
+  }, [
+    setCameraState,
+    playClickSound,
+    setShowToggleButton,
+    lightOnWisdomNook,
+    setFrameLoopMode,
+  ]);
 
-  // All hooks must be at the top - moved here to fix conditional hook calls
   const group = useRef();
   const textRef = useRef();
 
@@ -662,7 +618,6 @@ export default function Avatar_dev_place({
   const fontPathFourth = "/fonts/DeliusSwashCaps-Regular.ttf";
   const fontPathFifth = "/fonts/Spartacus-KVdLp.ttf";
 
-  // Validate paths - but use a flag rather than early return
   const isTextureUrlValid =
     validateAssetPath(textureUrl) && validateAssetPath(textureUrlSign);
   const isModelPathValid = validateModelPath(modelPath);
@@ -675,7 +630,6 @@ export default function Avatar_dev_place({
     fontPathFifth,
   ].every((path) => validateAssetPath(path));
 
-  // Load assets only if valid
   const textureremote = useTexture(
     isTextureUrlValid
       ? textureUrl
@@ -706,7 +660,6 @@ export default function Avatar_dev_place({
     }
   });
 
-  // Log validation errors without early returns
   useEffect(() => {
     if (!isTextureUrlValid) {
       console.error("Blocked unsafe texture paths for remote");

@@ -11,7 +11,7 @@ export default function Building({ onLoad }) {
   if (!validateModelPath(modelPath)) {
     console.error("Blocked unsafe 3D model:", modelPath);
     return null;
-  } // μέχρι εδώ
+  }
   const ktx2Loader = useSharedKTX2Loader();
   const { nodes, materials, animations, scene } = useLoader(
     GLTFLoader,

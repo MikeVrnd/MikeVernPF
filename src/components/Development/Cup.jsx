@@ -35,7 +35,6 @@ function useShakeAndScale() {
   };
 }
 
-// Cup Component
 const modelPath = `${window.location.origin}/Objects/Final/Cup.glb`;
 const audioPath = "/Doink.mp3";
 const audioPathHover = "/hover.mp3";
@@ -128,7 +127,6 @@ function usePortraitAnimation() {
   };
 }
 
-// Portrait Component
 const modelPathPortrait = `${window.location.origin}/Objects/Final/PortraitMerged.glb`;
 const Portrait = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF(modelPathPortrait);
