@@ -27,6 +27,7 @@ developerScenePromise.then(() => console.log("Developer scene preloaded"));
 import NightSoundscape from "./components/Development/NightSoundscape";
 import DaySoundscape from "./components/Accounting/DaySoundscape";
 import { validateAssetPath } from "./utils/security";
+import PerformanceLogger from "./PerformanceHud";
 
 const SceneWrapper = React.memo(({ children, isActive, onUnload }) => {
   const [shouldRender, setShouldRender] = useState(isActive);
@@ -295,6 +296,7 @@ function App() {
             )}
           </group>
         </Suspense>
+        <PerformanceLogger />
       </Canvas>
 
       {!isLoading && showToggleButton && (

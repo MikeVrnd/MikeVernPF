@@ -246,7 +246,7 @@ export default function Tree({ onLoad }) {
 
   const { scene } = useLoader(
     GLTFLoader,
-    "/Objects/Final/Tree_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb",
+    "/Objects/Final/Tree_resized_etc1s_draco_meshopt_dedup_pruned_simplified_final_optimized.glb",
     (loader) => {
       const ktx2Loader = new KTX2Loader()
         .setTranscoderPath("/basis/")
