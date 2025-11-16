@@ -719,7 +719,7 @@ export default function Avatar_dev_place({
             {showHouse && (
               <Avatar
                 animation="Typing"
-                position={[0.0, 0.0, 0.05]}
+                position={[0.0, 0.1, 0.05]}
                 rotation={[0, 0, 0]}
               />
             )}
