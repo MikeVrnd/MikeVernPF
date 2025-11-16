@@ -85,9 +85,9 @@ const pageMaterials = [
 ];
 
 pages.forEach((page) => {
-  const frontPath = `/textures/${page.front}.jpg`;
-  const backPath = `/textures/${page.back}.jpg`;
-  const roughnessPath = `/textures/book-cover-roughness.jpg`;
+  const frontPath = `/textures/${page.front}.webp`;
+  const backPath = `/textures/${page.back}.webp`;
+  const roughnessPath = `/textures/book-cover-roughness.webp`;
 
   if (validateAssetPath(frontPath)) useTexture.preload(frontPath);
   if (validateAssetPath(backPath)) useTexture.preload(backPath);
@@ -95,9 +95,9 @@ pages.forEach((page) => {
 });
 
 const Page = ({ number, front, back, page, opened, bookClosed, ...props }) => {
-  const frontPath = `/textures/${front}.jpg`;
-  const backPath = `/textures/${back}.jpg`;
-  const roughnessPath = `/textures/book-cover-roughness.jpg`;
+  const frontPath = `/textures/${front}.webp`;
+  const backPath = `/textures/${back}.webp`;
+  const roughnessPath = `/textures/book-cover-roughness.webp`;
 
   if (!validateAssetPath(frontPath) || !validateAssetPath(backPath)) {
     console.log("Blocked unsafe texture paths", { frontPath });
@@ -113,10 +113,10 @@ const Page = ({ number, front, back, page, opened, bookClosed, ...props }) => {
   }
 
   const [picture, picture2, pictureRoughness] = useTexture([
-    `/textures/${front}.jpg`,
-    `/textures/${back}.jpg`,
+    `/textures/${front}.webp`,
+    `/textures/${back}.webp`,
     ...(number === 0 || number === pages.length - 1
-      ? [`/textures/book-cover-roughness.jpg`]
+      ? [`/textures/book-cover-roughness.webp`]
       : []),
   ]);
 

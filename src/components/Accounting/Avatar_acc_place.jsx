@@ -326,7 +326,7 @@ export default function Avatar_acc_place({
 
   const group = useRef();
   const modelPath = `${window.location.origin}/Objects/Final/avatar.glb`;
-  const texturePath = "/textures/book-cover.jpg";
+  const texturePath = "/textures/book-cover.webp";
   const fontPath = "/fonts/bodoni-mt-bold-italic.ttf";
 
   if (typeof validateModelPath === "function") {

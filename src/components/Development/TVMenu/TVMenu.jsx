@@ -3,15 +3,6 @@ import { Text } from "@react-three/drei";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 
-const Content = ({ projectId }) => {
-  const contentMap = {
-    1: "Στο παρόν έργο παρουσιάζεται το πρώτο project που υλοποιήθηκε σε VBA. Με χρήση Userform της VBA έχουν δημιουργηθεί δύο καρτέλες για την καταχώριση εξόδων και \nπαγίων. \n \nΣτην καρτέλα των εξόδων υπάρχει η δυνατότητα αυτόματης αναζήτησης λογ/σμών ΕΓΛΣ, καταστημάτων και προμηθευτών. Επιπρόσθετα παρέχεται η δυνατότητα υπολογισμού αναλογιών εξόδου είτε σε μηνιαία ή σε ετήσια βάση. \n \nΣτην καρτέλα των παγίων παρέχεται πέραν των προλεχθέντων η δυνατότητα υπολογισμού αποσβέσεων βάσει της αναγραφόμενης ποσότητας και καθαρής αξίας. \n \nΟι λογ/σμοί ΕΓΛΣ αντλούνται αυτόματα από υφιστάμενη βάση δεδομένων. Τέλος, αξίζει να σημειωθεί ότι στην περιγραφή κάθε εγγραφής αναγράφεται η επωνυμία του καταστήματος ή της αντίστοιχης PO. Για μεγαλύτερη ταχύτητα στην αναπαραγωγή του video πατήστε <i>F12</i>. Για έξοδο από την οθόνη πατήστε το κόκκινο κουμπί του τηλεχειριστηρίου.",
-
-    2: "This is the content for Project 2.",
-    3: "This is the content for Project 3.",
-  };
-  return contentMap[projectId] || "No content found for this project.";
-};
 const TVMenu = forwardRef((props, ref) => {
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const videoRefs = useRef({});
@@ -64,17 +55,16 @@ const TVMenu = forwardRef((props, ref) => {
     return textureRefs.current[id];
   };
   useEffect(() => {
-    // Pause all videos
     Object.entries(videoRefs.current).forEach(([id, video]) => {
       if (!video.paused) {
         video.pause();
       }
     });
-    // Play selected video from beginning
+
     if (selectedProjectId !== null && videoRefs.current[selectedProjectId]) {
       const selectedVideo = videoRefs.current[selectedProjectId];
       selectedVideo.currentTime = 0;
-      // Stop all video sync callbacks
+
       Object.keys(rvfcIds.current).forEach((vid) => stopVideoSync(vid));
       selectedVideo
         .play()
@@ -84,7 +74,7 @@ const TVMenu = forwardRef((props, ref) => {
         .catch((e) => console.warn("❌ Couldn't play video:", e.message));
     }
   }, [selectedProjectId]);
-  // Cleanup on unmount
+
   useEffect(() => {
     return () => {
       Object.keys(rvfcIds.current).forEach((vid) => stopVideoSync(vid));
@@ -101,28 +91,26 @@ const TVMenu = forwardRef((props, ref) => {
     };
   }, []);
   const handleProjectClick = (proj) => {
-    // console.log(`🎬 Switching to project ${proj.id}`);
     if (!videoRefs.current[proj.id]) {
       getVideoTexture(proj.video, proj.id);
     }
     setSelectedProjectId(proj.id);
   };
   const handleStopClick = () => {
-    // console.log(`⏹️ Stopping current video`);
     setSelectedProjectId(null);
   };
   const handleNextClick = () => {
     if (selectedProjectId === null) return;
     const currentIndex = projects.findIndex((p) => p.id === selectedProjectId);
     const nextIndex = (currentIndex + 1) % projects.length;
-    // console.log(`⏭️ Moving to next project: ${projects[nextIndex].id}`);
+
     setSelectedProjectId(projects[nextIndex].id);
   };
   const handlePreviousClick = () => {
     if (selectedProjectId === null) return;
     const currentIndex = projects.findIndex((p) => p.id === selectedProjectId);
-    const prevIndex = (currentIndex - 1 + projects.length) % projects.length;
-    // console.log(`⏮️ Moving to previous project: ${projects[prevIndex].id}`);
+    const prevIndex = (currentIndex - 1) % projects.length;
+
     setSelectedProjectId(projects[prevIndex].id);
   };
   const showVideo = selectedProjectId !== null;
@@ -171,12 +159,9 @@ const TVMenu = forwardRef((props, ref) => {
         <group position={[1.2, 0.98, -1.96]} rotation={[-Math.PI / 2.4, 0, 0]}>
           {/* Project selection buttons (1, 2, 3) - First row */}
           {projects.map((proj, index) => {
-            // const col = index % 4;
-            // const xOffset = col * 0.118;
-            // const yOffset = 0.15;
-            const col = index % 3; // 3 icons per row
-            const row = Math.floor(index / 3); // move to next line every 3 icons
-            const xOffset = col * 0.118; // horizontal spacing
+            const col = index % 3;
+            const row = Math.floor(index / 3);
+            const xOffset = col * 0.118;
             const yOffset = 0.15 - row * 0.14;
             return (
               <Text
@@ -187,7 +172,6 @@ const TVMenu = forwardRef((props, ref) => {
                 anchorX="center"
                 anchorY="middle"
                 visible={false}
-                // transparent
                 onPointerOver={() => (document.body.style.cursor = "pointer")}
                 onPointerOut={() => (document.body.style.cursor = "default")}
                 onClick={() => handleProjectClick(proj)}
@@ -206,7 +190,6 @@ const TVMenu = forwardRef((props, ref) => {
             anchorX="center"
             anchorY="middle"
             visible={false}
-            // transparent
             onPointerOver={() => (document.body.style.cursor = "pointer")}
             onPointerOut={() => (document.body.style.cursor = "default")}
             onClick={handlePreviousClick}
@@ -223,7 +206,6 @@ const TVMenu = forwardRef((props, ref) => {
             anchorY="middle"
             visible={false}
             scale={1.3}
-            // transparent
             onPointerOver={() => (document.body.style.cursor = "pointer")}
             onPointerOut={() => (document.body.style.cursor = "default")}
             onClick={handleStopClick}
@@ -232,7 +214,6 @@ const TVMenu = forwardRef((props, ref) => {
           </Text>
           {/* Next button */}
           <Text
-            // position={[0.239, -0.1, -0.28]}
             position={[0.239, -0.128, -0.287]}
             rotation={[Math.PI / 15, 0, 0]}
             fontSize={0.061}

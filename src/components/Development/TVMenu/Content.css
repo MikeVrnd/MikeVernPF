@@ -1,22 +1,15 @@
-/* Content.css */
-/* Content.css */
 .content {
-  width: 100%; /* Take up full width of the mesh */
-  height: 100%; /* Take up full height of the mesh */
-  padding: 20px; /* Add some padding */
-  box-sizing: border-box; /* Ensure padding is included in the width/height */
-  background-color: rgba(
-    51,
-    51,
-    51,
-    0.8
-  ); /* Dark background with some transparency */
-  border-radius: 8px; /* Rounded corners */
-  color: white; /* White text color */
-  font-family: Arial, sans-serif; /* Use a clean font */
-  text-align: center; /* Center-align text */
-  display: flex; /* Use flexbox for centering */
-  align-items: center; /* Center vertically */
-  justify-content: center; /* Center horizontally */
-  overflow: hidden; /* Prevent content from overflowing */
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: rgba(51, 51, 51, 0.8);
+  border-radius: 8px;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }

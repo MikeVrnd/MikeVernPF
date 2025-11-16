@@ -294,6 +294,8 @@ export default function Avatar_dev_place({
       setShowBook(true);
       setShowToggleButton(false);
       setFrameLoopMode("demand");
+      setIsVideoPlaying(true);
+      setShowBook(true);
     });
   }, [setCameraState, playClickSound, setShowToggleButton, setFrameLoopMode]);
 
@@ -611,7 +613,7 @@ export default function Avatar_dev_place({
   const textureUrlSign =
     "/textures/TexturesCompressed/Developer/DoorPlate3.jpg";
   const modelPath = `${window.location.origin}/Objects/Final/avatar.glb`;
-  const texturePath = "/textures/book-cover.jpg";
+  const texturePath = "/textures/book-cover.webp";
   const fontPath = "/fonts/bodoni-mt-bold-italic.ttf";
   const fontPathSec = "/fonts/frenchscriptmt.ttf";
   const fontPathThird = "/fonts/Cookie-Regular.ttf";
@@ -644,7 +646,7 @@ export default function Avatar_dev_place({
     isModelPathValid ? modelPath : "/Objects/Final/avatar.glb"
   );
   const bookTexture = useTexture(
-    isTexturePathValid ? texturePath : "/textures/book-cover.jpg"
+    isTexturePathValid ? texturePath : "/textures/book-cover.webp"
   );
 
   const clone = React.useMemo(
@@ -1100,11 +1102,11 @@ export default function Avatar_dev_place({
           maxPolarAngle={Math.PI / 2.01} //από εδώ ορίζει τη γωνία της κάμερας στο μισό σε x άξονα
           truck={false}
         />
+        <Suspense fallback={null}>
+          {showBook && <Book ref={bookRef} />}
+        </Suspense>
         {!performanceMode && (
           <>
-            <Suspense fallback={null}>
-              {showBook && <Book ref={bookRef} />}
-            </Suspense>
             {showHouse && <Cup ref={cupRef} />}
             <Portrait />
             <Bachelor />
