@@ -2,6 +2,7 @@ import React, { Suspense, useRef, useState, useEffect, lazy } from "react";
 import PropTypes from "prop-types";
 import { Canvas, extend } from "@react-three/fiber";
 import { OrbitControls, Html, useProgress } from "@react-three/drei";
+import { Analytics } from "@vercel/analytics/react";
 import {
   Bloom,
   EffectComposer,
@@ -295,7 +296,7 @@ function App() {
           </group>
         </Suspense>
       </Canvas>
-
+      <Analytics />
       {!isLoading && showToggleButton && (
         <div className="buttons-container">
           <button
