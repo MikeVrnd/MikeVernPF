@@ -152,13 +152,9 @@ function App() {
 
   const preloadOppositeScene = () => {
     if (isDay) {
-      developerScenePromise.then(() =>
-        console.log("Developer scene preloaded on hover")
-      );
+      developerScenePromise;
     } else {
-      accountingScenePromise.then(() =>
-        console.log("Accounting scene preloaded on hover")
-      );
+      accountingScenePromise;
     }
   };
 

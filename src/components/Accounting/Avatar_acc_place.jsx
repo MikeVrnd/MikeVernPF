@@ -61,7 +61,7 @@ export default function Avatar_acc_place({
     if (validateAssetPath(audioPath)) {
       const clickSound = new Audio(audioPath);
       clickSound.volume = 0.5;
-      clickSound.play().catch((err) => console.log("Sound play error:", err));
+      clickSound.play().catch((err) => {});
     }
   };
 

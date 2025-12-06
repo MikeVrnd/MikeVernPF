@@ -112,9 +112,7 @@ const Bachelor = forwardRef((props, ref) => {
                 setHovered(true);
                 hoverSoundRef.current = new Audio(audioPath);
                 hoverSoundRef.current.volume = 0.5;
-                hoverSoundRef.current
-                  .play()
-                  .catch((err) => console.log("Sound play error:", err));
+                hoverSoundRef.current.play().catch((err) => {});
               }}
               onPointerOut={(e) => {
                 e.stopPropagation();
@@ -175,9 +173,7 @@ const Proficiency = forwardRef((props, ref) => {
                 setHovered(true);
                 hoverSoundRef.current = new Audio(audioPath);
                 hoverSoundRef.current.volume = 0.5;
-                hoverSoundRef.current
-                  .play()
-                  .catch((err) => console.log("Sound play error:", err));
+                hoverSoundRef.current.play().catch((err) => {});
               }}
               onPointerOut={(e) => {
                 e.stopPropagation();
@@ -235,18 +231,14 @@ const LogisthsAtaxhs = forwardRef((props, ref) => {
             setHovered(true);
             hoverSoundRef.current = new Audio(audioPath);
             hoverSoundRef.current.volume = 0.5;
-            hoverSoundRef.current
-              .play()
-              .catch((err) => console.log("Sound play error:", err));
+            hoverSoundRef.current.play().catch((err) => {});
           }}
           onPointerOut={(e) => {
             e.stopPropagation();
             setHovered(false);
             hoverSoundRef.current = new Audio(audioPath);
             hoverSoundRef.current.volume = 0.5;
-            hoverSoundRef.current
-              .play()
-              .catch((err) => console.log("Sound play error:", err));
+            hoverSoundRef.current.play().catch((err) => {});
           }}
         >
           <mesh
@@ -293,9 +285,7 @@ const Deutsch = forwardRef((props, ref) => {
             setHovered(true);
             hoverSoundRef.current = new Audio(audioPath);
             hoverSoundRef.current.volume = 0.5;
-            hoverSoundRef.current
-              .play()
-              .catch((err) => console.log("Sound play error:", err));
+            hoverSoundRef.current.play().catch((err) => {});
           }}
           onPointerOut={(e) => {
             e.stopPropagation();
@@ -351,9 +341,7 @@ const Master = forwardRef((props, ref) => {
             setHovered(true);
             hoverSoundRef.current = new Audio(audioPath);
             hoverSoundRef.current.volume = 0.5;
-            hoverSoundRef.current
-              .play()
-              .catch((err) => console.log("Sound play error:", err));
+            hoverSoundRef.current.play().catch((err) => {});
           }}
           onPointerOut={(e) => {
             e.stopPropagation();

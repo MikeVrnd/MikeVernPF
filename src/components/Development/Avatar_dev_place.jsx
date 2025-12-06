@@ -56,9 +56,7 @@ const audioManager = {
     }
     this.currentSound = new Audio(path);
     this.currentSound.volume = 0.5;
-    this.currentSound
-      .play()
-      .catch((err) => console.log("Sound play error:", err));
+    this.currentSound.play();
   },
 };
 
