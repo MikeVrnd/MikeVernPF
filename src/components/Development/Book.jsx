@@ -260,7 +260,7 @@ const Page = ({ number, front, back, page, opened, bookClosed, ...props }) => {
               fontFamily: "'Delius Swash Caps', cursive",
             }}
           >
-            Scroll to zoom
+            Scroll to zoom Drag to pan
           </div>
         </Html>
       )}

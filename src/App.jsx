@@ -1,7 +1,7 @@
 import React, { Suspense, useRef, useState, useEffect, lazy } from "react";
 import PropTypes from "prop-types";
 import { Canvas, extend } from "@react-three/fiber";
-import { OrbitControls, Html, useProgress } from "@react-three/drei";
+import { Html, OrbitControls, useProgress } from "@react-three/drei";
 import { Analytics } from "@vercel/analytics/react";
 import {
   Bloom,
@@ -27,7 +27,9 @@ developerScenePromise.then(() => console.log("Developer scene preloaded"));
 
 import NightSoundscape from "./components/Development/NightSoundscape";
 import DaySoundscape from "./components/Accounting/DaySoundscape";
+import LoadingDayNightSplash from "./components/LoadingDayNightSplash";
 import { validateAssetPath } from "./utils/security";
+
 const SceneWrapper = React.memo(({ children, isActive, onUnload }) => {
   const [shouldRender, setShouldRender] = useState(isActive);
 
@@ -68,13 +70,14 @@ function LoadingFallback({ onLoadingChange }) {
     onLoadingChange: PropTypes.func,
   };
 
+  const displayProgress = Math.min(99, Math.floor(progress));
   return (
     <Html center>
       <div
         className="loading-overlay"
         style={{
           color: "white",
-          fontSize: "1.2rem",
+          fontSize: "1.1rem",
           textAlign: "center",
           background: "rgba(0, 0, 0, 0.6)",
           padding: "12px 20px",
@@ -88,8 +91,8 @@ function LoadingFallback({ onLoadingChange }) {
           fontFamily: "sans-serif",
         }}
       >
-        <span>Loading may take a moment... </span>
-        <span>{progress.toFixed(0)}%</span>
+        <span>Loading may take a while... </span>
+        <span>{displayProgress}%</span>
       </div>
     </Html>
   );
@@ -100,9 +103,9 @@ function App() {
   const [isDay, setIsDay] = useState(true);
   const [showToggleButton, setShowToggleButton] = useState(true);
   const [isMobile] = useState(window.innerWidth < 768);
-
+  const [hasChosenScene, setHasChosenScene] = useState(false);
   const [loadedScenes, setLoadedScenes] = useState({
-    day: true,
+    day: false,
     night: false,
   });
 
@@ -158,7 +161,8 @@ function App() {
     }
   };
 
-  const toggleMode = () => {
+  const switchMode = (nextIsDay) => {
+    if (nextIsDay === isDay) return;
     setIsLoading(true);
 
     const sceneToUnload = isDay ? "day" : "night";
@@ -168,8 +172,8 @@ function App() {
     }));
 
     setTimeout(() => {
-      setIsDay((prev) => !prev);
-      const sceneToLoad = !isDay ? "day" : "night";
+      setIsDay(nextIsDay);
+      const sceneToLoad = nextIsDay ? "day" : "night";
       setLoadedScenes((prev) => ({
         ...prev,
         [sceneToLoad]: true,
@@ -183,6 +187,21 @@ function App() {
         setIsLoading(false);
       }, 1000);
     }, 300);
+  };
+
+  const startInitialLoad = (nextIsDay) => {
+    if (hasChosenScene) return;
+    setHasChosenScene(true);
+    setIsDay(nextIsDay);
+    setIsLoading(true);
+    setLoadedScenes((prev) => ({
+      ...prev,
+      [nextIsDay ? "day" : "night"]: true,
+    }));
+  };
+
+  const toggleMode = () => {
+    switchMode(!isDay);
   };
 
   const [frameLoopMode, setFrameLoopMode] = useState("always");
@@ -257,7 +276,7 @@ function App() {
           fallback={<LoadingFallback onLoadingChange={handleLoadingChange} />}
         >
           <group position={[1, -2, 0]}>
-            {loadedScenes.day && (
+            {hasChosenScene && loadedScenes.day && (
               <SceneWrapper
                 isActive={isDay}
                 sceneName="Day"
@@ -273,7 +292,7 @@ function App() {
               </SceneWrapper>
             )}
 
-            {loadedScenes.night && (
+            {hasChosenScene && loadedScenes.night && (
               <SceneWrapper
                 isActive={!isDay}
                 sceneName="Night"
@@ -292,6 +311,13 @@ function App() {
           </group>
         </Suspense>
       </Canvas>
+      {!hasChosenScene && (
+        <LoadingDayNightSplash
+          showModels={!hasChosenScene}
+          onSelectDay={() => startInitialLoad(true)}
+          onSelectNight={() => startInitialLoad(false)}
+        />
+      )}
       <Analytics />
       {!isLoading && showToggleButton && (
         <div className="buttons-container">
@@ -300,7 +326,7 @@ function App() {
             onMouseEnter={preloadOppositeScene}
             className="pulsing-button mode-button"
           >
-            {/*Παρακάτω βάζω security check */}
+            {/*Н НёО?НёНэН?О?О? Н¤Н?НО? security check */}
             <img
               src={
                 validateAssetPath(

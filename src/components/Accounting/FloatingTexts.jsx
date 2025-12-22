@@ -15,7 +15,7 @@ const FloatingTexts = () => {
   });
 
   const textConfigs = [
-    { content: "About me", position: [5.501, 3.45, 0.05], scale: 0.4 },
+    { content: "About me", position: [5.501, 3.45, 0.05], scale: 0.35 },
     { content: "Projects", position: [5.501, 2.47, 0.05], scale: 0.35 },
     { content: "Wisdom Nook", position: [5.501, 1.47, 0.05], scale: 0.3 },
     { content: "Exit", position: [5.501, 0.7, 0.05], scale: 0.35 },

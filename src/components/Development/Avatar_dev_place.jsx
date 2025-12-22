@@ -333,6 +333,13 @@ export default function Avatar_dev_place({
     });
   }, [setCameraState, playClickSound, setShowToggleButton]);
   const handleExitProjects = useCallback(() => {
+    if (showTVMenu && tvMenuRef.current?.hasSelectedProject) {
+      const hasProject = tvMenuRef.current.hasSelectedProject();
+      if (!hasProject && tvMenuRef.current.showFirstProject) {
+        tvMenuRef.current.showFirstProject();
+        return;
+      }
+    }
     playTVSound();
 
     setCameraState({
@@ -398,6 +405,7 @@ export default function Avatar_dev_place({
     setShowToggleButton,
     setFrameLoopMode,
     prevMaxPolarAngle,
+    showTVMenu,
   ]);
   const handleExitClickStars = useCallback(() => {
     playClickSound();
@@ -862,9 +870,9 @@ export default function Avatar_dev_place({
         {/* Παρακάτω το button για το about me */}
         <Text
           font={fontPath}
-          position={[23.62, 2.64, 27.54]}
+          position={[23.62, 2.66, 27.54]}
           textAlign="center"
-          scale={0.28}
+          scale={0.27}
           onClick={handleClickAboutMe}
           ref={meshRefInitial}
           toneMapped={false}

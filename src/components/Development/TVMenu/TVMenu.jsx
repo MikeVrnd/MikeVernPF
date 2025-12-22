@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, forwardRef } from "react";
+import { useImperativeHandle } from "react";
 import { Text } from "@react-three/drei";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
@@ -114,6 +115,23 @@ const TVMenu = forwardRef((props, ref) => {
     setSelectedProjectId(projects[prevIndex].id);
   };
   const showVideo = selectedProjectId !== null;
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      showFirstProject: () => {
+        if (projects.length === 0) return;
+        const firstProject = projects[0];
+        if (!videoRefs.current[firstProject.id]) {
+          getVideoTexture(firstProject.video, firstProject.id);
+        }
+        setSelectedProjectId(firstProject.id);
+      },
+      hasSelectedProject: () => selectedProjectId !== null,
+      clearSelection: () => setSelectedProjectId(null),
+    }),
+    [selectedProjectId]
+  );
   return (
     <>
       <group
