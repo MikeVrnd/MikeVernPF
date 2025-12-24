@@ -10,15 +10,14 @@ Users can switch between day and night to explore both worlds inside a 3D scene.
 ---
 
 ## 🚀 Live Demo
-🔗 https://your-vercel-url.vercel.app
+🔗 https://mike-vern-pf.vercel.app
+🔗 https://mikevernadakis.com
 
 ---
 
 ## 🛠️ Tech Stack
 - React + Vite
 - Three.js
-- @react-three/fiber / drei
-- r3f-perf, stats-js
 - Vercel
 
 ---
