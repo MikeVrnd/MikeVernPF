@@ -2,8 +2,8 @@
 
 An interactive **React Three Fiber** portfolio that represents my professional duality:
 
-- ☀️ **Day** — Accountant / analytical mindset  
-- 🌙 **Night** — Developer / creative mindset  
+- ☀️ **Day** — Accountant
+- 🌙 **Night** — Developer
 
 Users can switch between day and night to explore both worlds inside a 3D scene.
 
