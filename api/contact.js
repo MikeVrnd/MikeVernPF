@@ -24,17 +24,19 @@ export default async function handler(req, res) {
       Messages: [
         {
           From: {
-            Email: "m.vernadakis@yahoo.gr",
-            Name: "Contact Form",
+            Email: "contact@mikevernadakis.com",
+            Name: "Mike Vernadakis",
           },
           To: [
             {
               Email: "m.vernadakis@yahoo.gr",
-              Name: "You",
+              Name: "Mike Vernadakis",
             },
           ],
           Subject: "New message from your app",
-          TextPart: `Name: ${name || "N/A"}\nEmail: ${email || "N/A"}\n\n${message}`,
+          TextPart: `Name: ${name || "N/A"}\nEmail: ${
+            email || "N/A"
+          }\n\n${message}`,
         },
       ],
     });
