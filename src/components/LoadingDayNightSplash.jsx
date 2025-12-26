@@ -1,6 +1,8 @@
 import React, { useMemo, useState, useCallback } from "react";
-import { validateAssetPath } from "../utils/security";
 
+import { validateAssetPath } from "../utils/security";
+import ContactModal from "./Contact/ContactModal";
+import { useContactForm } from "./Contact/useContactForm";
 const LoadingDayNightSplash = ({ showModels, onSelectDay, onSelectNight }) => {
   const [hovered, setHovered] = useState(null);
 
@@ -17,11 +19,30 @@ const LoadingDayNightSplash = ({ showModels, onSelectDay, onSelectNight }) => {
   const handleDayHover = useCallback(() => setHovered("day"), []);
   const handleNightHover = useCallback(() => setHovered("night"), []);
   const handleOut = useCallback(() => setHovered(null), []);
+  const contact = useContactForm();
 
   return (
     <div className="loading-splash" aria-label="Loading day and night scenes">
       <div className="loading-splash-header">
-        <h1>Mike Vernadakis</h1>
+        <h1>Between Day and Night</h1>
+        <h1>
+          When the sun is up, I work with deadlines, handling tax submissions,
+          reporting, and ERP-related issues.
+        </h1>
+        <h1>
+          When darkness falls, creativity takes over — code, experimentation,
+          learning, and curiosity.
+        </h1>
+        <h1>
+          Choose your entry point: <br /> Day → Accountant / Night → Developer
+        </h1>
+        <button
+          type="button"
+          className="loading-splash-contact"
+          onClick={contact.open}
+        >
+          Contact
+        </button>
       </div>
       {showModels && (
         <div className="loading-splash-cards">
@@ -55,8 +76,39 @@ const LoadingDayNightSplash = ({ showModels, onSelectDay, onSelectNight }) => {
           </button>
         </div>
       )}
+      <div className="loading-splash-note" role="note">
+        Once the scene has loaded, use the Day{" "}
+        <img
+          className="loading-splash-note-icon"
+          src="/textures/TexturesCompressed/Sun.webp"
+          alt="Sun icon"
+        />{" "}
+        or Night{" "}
+        <img
+          className="loading-splash-note-icon"
+          src="/textures/TexturesCompressed/Moon.webp"
+          alt="Moon icon"
+        />{" "}
+        button at the top of the screen to switch scenes.
+      </div>
+      {contact.status && (
+        <div className="loading-splash-toast" role="status">
+          {contact.status}
+        </div>
+      )}
+      <ContactModal
+        isOpen={contact.isOpen}
+        onCancel={contact.cancel}
+        onSubmit={contact.submit}
+        isSending={contact.isSending}
+        name={contact.name}
+        setName={contact.setName}
+        email={contact.email}
+        setEmail={contact.setEmail}
+        message={contact.message}
+        setMessage={contact.setMessage}
+      />
     </div>
   );
 };
-
 export default LoadingDayNightSplash;

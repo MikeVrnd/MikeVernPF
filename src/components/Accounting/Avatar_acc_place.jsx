@@ -9,7 +9,6 @@ import { HouseAccountant } from "./HouseAccountant";
 import { Book_accountant } from "./Book_accountant";
 import AccPlaceKtx2 from "./AccPlaceKtx2";
 import Building from "./Building";
-// import Avatar from "../Avatar";
 import BuildingsWhite from "./BuildingsWhite";
 import Tree from "./Tree";
 import PCAccountant from "./PCAccountant";

@@ -235,82 +235,84 @@ function App() {
         }}
       />
 
-      <Canvas
-        frameloop={frameLoopMode}
-        dpr={[1, 1.5]}
-        performance={{ min: 0.5 }}
-        gl={{
-          powerPreference: "high-performance",
-          antialias: false,
-          alpha: false,
-          preserveDrawingBuffer: false,
-          stencil: false,
-          depth: true,
-        }}
-        camera={{
-          position: [38.1, 5.29, 50.6],
-          zoom: 1.5,
-          fov: 50,
-          near: 0.1,
-          far: 500,
-        }}
-        onCreated={({ camera, gl }) => {
-          cameraRef.current = camera;
-          window.__webglContext = gl;
-        }}
-      >
-        <Suspense fallback={null}>
-          <EffectComposer ref={composerRef} disableNormalPass>
-            <Bloom
-              luminanceThreshold={1}
-              luminanceSmoothing={0.025}
-              mipmapBlur
-            />
-            <ToneMapping />
-          </EffectComposer>
-        </Suspense>
-
-        <OrbitControls ref={controlsRef} />
-
-        <Suspense
-          fallback={<LoadingFallback onLoadingChange={handleLoadingChange} />}
+      {hasChosenScene && (
+        <Canvas
+          frameloop={frameLoopMode}
+          dpr={[1, 1.5]}
+          performance={{ min: 0.5 }}
+          gl={{
+            powerPreference: "high-performance",
+            antialias: false,
+            alpha: false,
+            preserveDrawingBuffer: false,
+            stencil: false,
+            depth: true,
+          }}
+          camera={{
+            position: [38.1, 5.29, 50.6],
+            zoom: 1.5,
+            fov: 50,
+            near: 0.1,
+            far: 500,
+          }}
+          onCreated={({ camera, gl }) => {
+            cameraRef.current = camera;
+            window.__webglContext = gl;
+          }}
         >
-          <group position={[1, -2, 0]}>
-            {hasChosenScene && loadedScenes.day && (
-              <SceneWrapper
-                isActive={isDay}
-                sceneName="Day"
-                onUnload={() => handleSceneUnload("day")}
-              >
-                <Avatar_dev_place
-                  isMobile={isMobile}
-                  setShowToggleButton={setShowToggleButton}
-                  onRequestNightDisposal={() => setShouldDisposeNight(true)}
-                  setFrameLoopMode={setFrameLoopMode}
-                  playRemoteSound={playRemoteSound}
-                />
-              </SceneWrapper>
-            )}
+          <Suspense fallback={null}>
+            <EffectComposer ref={composerRef} disableNormalPass>
+              <Bloom
+                luminanceThreshold={1}
+                luminanceSmoothing={0.025}
+                mipmapBlur
+              />
+              <ToneMapping />
+            </EffectComposer>
+          </Suspense>
 
-            {hasChosenScene && loadedScenes.night && (
-              <SceneWrapper
-                isActive={!isDay}
-                sceneName="Night"
-                onUnload={() => handleSceneUnload("night")}
-              >
-                <Avatar_acc_place
-                  isMobile={isMobile}
-                  setShowToggleButton={setShowToggleButton}
-                  shouldDispose={shouldDisposeNight}
-                  onDisposed={() => setShouldDisposeNight(false)}
-                  setFrameLoopMode={setFrameLoopMode}
-                  playRemoteSound={playRemoteSound}
-                />
-              </SceneWrapper>
-            )}
-          </group>
-        </Suspense>
-      </Canvas>
+          <OrbitControls ref={controlsRef} />
+
+          <Suspense
+            fallback={<LoadingFallback onLoadingChange={handleLoadingChange} />}
+          >
+            <group position={[1, -2, 0]}>
+              {hasChosenScene && loadedScenes.day && (
+                <SceneWrapper
+                  isActive={isDay}
+                  sceneName="Day"
+                  onUnload={() => handleSceneUnload("day")}
+                >
+                  <Avatar_dev_place
+                    isMobile={isMobile}
+                    setShowToggleButton={setShowToggleButton}
+                    onRequestNightDisposal={() => setShouldDisposeNight(true)}
+                    setFrameLoopMode={setFrameLoopMode}
+                    playRemoteSound={playRemoteSound}
+                  />
+                </SceneWrapper>
+              )}
+
+              {hasChosenScene && loadedScenes.night && (
+                <SceneWrapper
+                  isActive={!isDay}
+                  sceneName="Night"
+                  onUnload={() => handleSceneUnload("night")}
+                >
+                  <Avatar_acc_place
+                    isMobile={isMobile}
+                    setShowToggleButton={setShowToggleButton}
+                    shouldDispose={shouldDisposeNight}
+                    onDisposed={() => setShouldDisposeNight(false)}
+                    setFrameLoopMode={setFrameLoopMode}
+                    playRemoteSound={playRemoteSound}
+                  />
+                </SceneWrapper>
+              )}
+            </group>
+          </Suspense>
+        </Canvas>
+      )}
       {!hasChosenScene && (
         <LoadingDayNightSplash
           showModels={!hasChosenScene}
