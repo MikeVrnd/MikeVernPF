@@ -35,7 +35,9 @@ export function useContactForm() {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to send");
+          const text = await response.text();
+          console.error("API error:", response.status, text);
+          throw new Error(text || "Failed to send");
         }
 
         setStatus(
