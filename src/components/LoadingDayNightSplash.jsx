@@ -41,7 +41,7 @@ const LoadingDayNightSplash = ({ showModels, onSelectDay, onSelectNight }) => {
           className="loading-splash-contact"
           onClick={contact.open}
         >
-          Contact
+          Contact me
         </button>
       </div>
       {showModels && (
