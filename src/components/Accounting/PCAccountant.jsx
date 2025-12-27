@@ -293,7 +293,6 @@ export default function PCAccountant() {
       {/* Video Display */}
       {showVideo && !isVideoMinimized && (
         <>
-          {/* Top video bar */}
           <mesh
             position={[0.241, 1.452, -2.117]}
             rotation={[0, -Math.PI / 1.0001, 0]}
@@ -302,7 +301,6 @@ export default function PCAccountant() {
             <meshBasicMaterial map={bar} />
           </mesh>
 
-          {/* X (close) button */}
           <mesh
             position={[-0.293, 1.452, -2.117]}
             rotation={[0, -Math.PI / 1.0001, 0]}
@@ -314,7 +312,6 @@ export default function PCAccountant() {
             <meshBasicMaterial map={xsign} />
           </mesh>
 
-          {/* Minimize (-) button */}
           <mesh
             position={[-0.24, 1.452, -2.118]}
             rotation={[0, -Math.PI / 1.0001, 0]}
@@ -332,7 +329,6 @@ export default function PCAccountant() {
             <meshBasicMaterial map={minussign} />
           </mesh>
 
-          {/* Video player */}
           <mesh
             position={[0.236, 1.234, -2.116]}
             rotation={[0, -Math.PI / 1.0001, 0]}
@@ -349,7 +345,6 @@ export default function PCAccountant() {
         </>
       )}
 
-      {/* Minimized video icon (restore) */}
       {showVideo && (
         <mesh
           position={[0.298, 0.99, -2.128]}

@@ -146,7 +146,6 @@ const TVMenu = forwardRef((props, ref) => {
         <sprite position={[1.18, 1.899, -2.55]}>
           <planeGeometry args={[3.63, 1.698, 8, 8]} />
           <meshStandardMaterial color="black" />
-          {/* "#333"  */}
           {showVideo && (
             <meshBasicMaterial
               map={getVideoTexture(
@@ -158,24 +157,8 @@ const TVMenu = forwardRef((props, ref) => {
             />
           )}
         </sprite>
-        {/* Text panel */}
-        {/* <mesh position={[-0.2, 1.89, -2.5]}>
-          <planeGeometry args={[1.0, 1.75]} />
-          <meshStandardMaterial color="black" />
-          {showVideo && (
-            <Text
-              position={[-0.01, 0.6, 0.01]}
-              fontSize={0.045}
-              color="white"
-              maxWidth={0.85}
-            >
-              {Content({ projectId: selectedProjectId })}
-            </Text>
-          )}
-        </mesh> */}
-        {/* Buttons - 6 total: 3 project buttons + 3 control buttons */}
+
         <group position={[1.2, 0.98, -1.96]} rotation={[-Math.PI / 2.4, 0, 0]}>
-          {/* Project selection buttons (1, 2, 3) - First row */}
           {projects.map((proj, index) => {
             const col = index % 3;
             const row = Math.floor(index / 3);
@@ -198,8 +181,7 @@ const TVMenu = forwardRef((props, ref) => {
               </Text>
             );
           })}
-          {/* Control buttons - Second row */}
-          {/* Previous button */}
+          {/* Control buttons  */}
           <Text
             position={[0, -0.228, -0.287]}
             rotation={[Math.PI / 15, 0, 0]}

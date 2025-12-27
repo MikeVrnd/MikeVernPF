@@ -147,20 +147,13 @@ function ExitButtonStars({ onClick }) {
       />
 
       <group ref={signRef} position={[21, 2.8, 5.35]} scale={0.1}>
-        {/* E */}
         <VerticalLine x={-12} height={12} y={17} />
-        {/* 1. Vertical line instancing */}
         <HorizontalLine x={-9.5} y={20} width={5} />
-        {/* 2. Horizontal line instancing */}
         <HorizontalLine x={-9.5} y={17} width={5} />
         <HorizontalLine x={-9.5} y={14} width={5} />
-        {/* X */}
         <DiagonalLine x={-1} y={17} length={6} slope={2} />
-        {/* 3. Diagonal line instancing */}
         <DiagonalLine x={-1} y={17} length={6} slope={-2} />
-        {/* I */}
         <VerticalLine x={5} y={17} height={12} />
-        {/* T */}
         <HorizontalLine x={12} y={20} width={6} />
         <VerticalLine x={12} y={17} height={12} />
         <mesh

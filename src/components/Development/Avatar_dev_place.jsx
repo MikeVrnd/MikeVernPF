@@ -21,7 +21,6 @@ const Book = lazy(() =>
 );
 const ENABLE_SMOOTH_CAMERA = true;
 import { useTexture } from "@react-three/drei";
-// import Avatar from "../Avatar";
 const Avatar = React.lazy(() => import("../Avatar.jsx"));
 import Frames from "./Frames";
 import {
@@ -40,10 +39,7 @@ import Tree from "./Trees&Flowers/Tree";
 import Sky from "./Sky";
 import { useFrame } from "@react-three/fiber";
 import DoorSign from "./DoorSign";
-// import LightsOffBloom from "./LightsOffBloom";
 import TVMenu from "./TVMenu/TVMenu";
-// import DevPlaceKtx2 from "./DevPlaceKtx2";
-// import Pavement from "./Pavement";
 import { validateModelPath, validateAssetPath } from "../../utils/security";
 const DevPlaceKtx2 = React.lazy(() => import("./DevPlaceKtx2.jsx"));
 const Pavement = React.lazy(() => import("./Pavement.jsx"));
@@ -730,10 +726,8 @@ export default function Avatar_dev_place({
               />
             )}
           </Suspense>
-          {/* Παρακάτω προστίθεται η σκηνή χωρίς το */}
         </group>
         <ambientLight intensity={0.2} />
-        {/* παρακάτω η επικάλυψη του βιβλίου */}
         <mesh
           ref={cubeRef}
           position={[-1.18, 0.5532, -2.38]}
@@ -743,8 +737,7 @@ export default function Avatar_dev_place({
           <boxGeometry args={[0.01, 0.48, 0.32]} />
           <meshBasicMaterial map={bookTexture} />
         </mesh>
-        {/* μέχρι εδώ η επικάλυψη του βιβλίου */}
-        {/* παρακάτω το remote */}
+
         <mesh
           ref={cubeRef}
           position={[2.0, 0.55, -2.73]}
@@ -754,8 +747,7 @@ export default function Avatar_dev_place({
           <boxGeometry args={[0.38, 0.08, 1.12]} />
           <primitive object={materials} attach="material" />
         </mesh>
-        {/* μέχρι εδώ το remote */}
-        {/* από εδώ πρόσθετο φως για wisdom nook */}
+
         <rectAreaLight
           position={[-3.69, 2.36, 0.3]}
           rotation={[-Math.PI / 2, 0, 0]}
@@ -764,8 +756,7 @@ export default function Avatar_dev_place({
           intensity={lightOnWisdomNook ? 1.68 : 0}
           color={"White"}
         />
-        {/* μέχρι εδώ πρόσθετο φως για wisdom nook*/}
-        {/* από εδώ πρόσθετο φως για ταμπέλα στην πόρτα*/}
+
         <mesh
           position={[-7.22, 2.08, 1.63]}
           visible={hideObjects ? true : false}
@@ -782,7 +773,7 @@ export default function Avatar_dev_place({
           intensity={lightOnDoor ? 1.5 : 0}
           color={"White"}
         />
-        {/* μέχρι εδώ πρόσθετο φως για ταμπέλα στην πόρτα*/}
+
         <mesh position={[-7.22, 0.105, 2.36]} rotation={[0, Math.PI / 2, 0]}>
           <boxGeometry args={[1.32, 0.04, 2.16]} />
           <meshBasicMaterial
@@ -790,7 +781,7 @@ export default function Avatar_dev_place({
             visible={hideObjects ? true : false}
           />
         </mesh>
-        {/* από εδώ πρόσθετο φως για Navigation Guide */}
+
         <rectAreaLight
           position={[6.58, 0.9, -8.58]}
           rotation={[0, Math.PI, Math.PI / 2]}
@@ -799,9 +790,6 @@ export default function Avatar_dev_place({
           intensity={lightOnNavigationGuide ? 5.68 : 0}
           color={"White"}
         />
-        {/* μέχρι εδώ πρόσθετο φως για Navigation Guide*/}
-        {/* Μέχρι εδώ το έχω σαν Lamp που φωτίζει το βιβλίο */}
-        {"Προσθέτω reflection στο πάτωμα "}
 
         <Text
           font={fontPath}
@@ -867,7 +855,7 @@ export default function Avatar_dev_place({
         >
           Room
         </Text>
-        {/* Παρακάτω το button για το about me */}
+
         <Text
           font={fontPath}
           position={[23.62, 2.66, 27.54]}
@@ -929,7 +917,7 @@ export default function Avatar_dev_place({
           <boxGeometry args={[0.26, 0.05, 0.15]} />
           <meshBasicMaterial color="blue" />
         </mesh>
-        {/* Τηλεόρασης */}
+        {/* Τηλεόραση */}
         <mesh
           position={[2.42, 0.8, -2.85]}
           rotation={[-Math.PI / 2, -Math.PI / 8, -Math.PI / 2]}
@@ -941,8 +929,7 @@ export default function Avatar_dev_place({
           <planeGeometry args={[0.1, 0.1]} />
           <meshBasicMaterial />
         </mesh>
-        {/* Μέχρι εδώ το button για το about me */}
-        {/* Παρακάτω το button για τα Projects */}
+
         <Text
           font={fontPath}
           position={[23.62, 1.77, 27.54]}
@@ -997,7 +984,7 @@ export default function Avatar_dev_place({
             emissiveIntensity={3}
           />
         </Text>
-        {/* Από εδώ το exit view στην Wisdom Nook */}
+
         {/* Wisdom Nook */}
         <mesh
           position={[-4.42, 1.99, 0.21]}
@@ -1102,10 +1089,10 @@ export default function Avatar_dev_place({
         </mesh>
         <CameraControls
           ref={cameraControlsRef}
-          minDistance={46} //από εδώ ορίζει τη μικρότερη απόσταση μετά από click στη νύχτα
-          maxDistance={92} //από εδώ ορίζει τη μέγιστη απόσταση μετά από click στη νύχτα
+          minDistance={46}
+          maxDistance={92}
           minPolarAngle={0}
-          maxPolarAngle={Math.PI / 2.01} //από εδώ ορίζει τη γωνία της κάμερας στο μισό σε x άξονα
+          maxPolarAngle={Math.PI / 2.01}
           truck={false}
         />
         <Suspense fallback={null}>
@@ -1125,7 +1112,6 @@ export default function Avatar_dev_place({
             <Tree />
             <Sky />
             <Pavement />
-            {/* {!showHouse &&  */}
           </>
         )}
         {!setHideObjects && (

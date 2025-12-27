@@ -328,7 +328,6 @@ function App() {
             onMouseEnter={preloadOppositeScene}
             className="pulsing-button mode-button"
           >
-            {/*Н НёО?НёНэН?О?О? Н¤Н?НО? security check */}
             <img
               src={
                 validateAssetPath(

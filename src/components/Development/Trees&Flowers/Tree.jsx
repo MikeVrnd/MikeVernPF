@@ -6,25 +6,25 @@ import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 
 const TreeMiddle = Array.from({ length: 200 }, () => ({
-  position: [(Math.random() + 0.0) * 70, 3, (Math.random() + 0.0) * 120], // Y: 1.5
+  position: [(Math.random() + 0.0) * 70, 3, (Math.random() + 0.0) * 120],
   rotation: [-Math.PI / 2, 0, -Math.PI / 2],
   scale: [3.66, 3.66, 3.66],
 }));
 
 const TreeMiddle2 = Array.from({ length: 100 }, () => ({
-  position: [(Math.random() + 0.0) * 80, 3, (Math.random() + 0.0) * 60], // Y: 1.5
+  position: [(Math.random() + 0.0) * 80, 3, (Math.random() + 0.0) * 60],
   rotation: [-Math.PI / 2, 0, -Math.PI / 1.5],
   scale: [3.7, 3.7, 3.7],
 }));
 
 const TreeMiddle20 = Array.from({ length: 100 }, () => ({
-  position: [(Math.random() + 0.0) * 80, 3, (Math.random() + 0.0) * 40], // Y: 1.5
+  position: [(Math.random() + 0.0) * 80, 3, (Math.random() + 0.0) * 40],
   rotation: [-Math.PI / 2, 0, -Math.PI / 1.5],
   scale: [3.7, 3.7, 3.7],
 }));
 
 const TreeMiddle3 = Array.from({ length: 180 }, () => ({
-  position: [(Math.random() + 0.0) * 80, 3, (Math.random() + 0.0) * 85], // Y: 1.5
+  position: [(Math.random() + 0.0) * 80, 3, (Math.random() + 0.0) * 85],
   rotation: [-Math.PI / 2, 0, -Math.PI / 1.5],
   scale: [3.7, 3.7, 3.7],
 }));

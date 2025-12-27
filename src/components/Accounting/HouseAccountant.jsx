@@ -19,13 +19,11 @@ const shelfTopRow = Array.from({ length: 8 }, (_, i) => ({
   rotation: [0, 0, 0],
   scale: [0.45, 0.46, 0.26],
 }));
-// τέρμα αριστερά άσπρο τέρμα πάνω
 const shelvesUpperBlackLeftSingle = Array.from({ length: 1 }, (_, i) => ({
   position: [-4.01 + i * 0.89, 2.1676, -4.78],
   rotation: [0, 0, 0],
   scale: [0.545, 0.464, 0.258],
 }));
-// είναι το ακριανό μαύρο
 const shelvesMiddleBlackLeftSingle = Array.from({ length: 1 }, (_, i) => ({
   position: [-4.01 + i * 0.89, 1.394, -4.78],
   rotation: [0, 0, 0],
@@ -115,7 +113,7 @@ const handleShelvesLowerBlackUnderPig = Array.from({ length: 6 }, (_, i) => ({
   rotation: [-1.568, 0, Math.PI / 2],
   scale: [0.2, 0.262, 0.193],
 }));
-// τα handles του Upper Under Pig
+// τα handles του Upper
 const handleShelvesMiddleWhiteSingleUnderPig = Array.from(
   { length: 3 },
   (_, i) => ({
@@ -186,7 +184,6 @@ const InstancedMeshGroup = ({ data, geometry, material }) => {
 const InstancedShelves = ({ nodes, materials }) => {
   return (
     <>
-      {/* Top row: black + white */}
       <InstancedMeshGroup
         data={shelfTopRow}
         geometry={nodes.ShelvesUpperLeft.geometry}
@@ -306,13 +303,12 @@ const InstancedShelves = ({ nodes, materials }) => {
 const InstancedHandles = ({ nodes, materials }) => {
   return (
     <>
-      {/* ShelvesLowerBlackHandles είναι τα πολλά κάτω ράφια */}
       <InstancedMeshGroup
         data={handleTopRow}
         geometry={nodes.ShelvesUpperLeftHandles.geometry}
         material={materials["black.001"]}
       />
-      {/* Bottom row: white + black */}
+
       <InstancedMeshGroup
         data={handleMiddleLeftRow}
         geometry={nodes.ShelvesMiddleBlackRightHandle.geometry}
