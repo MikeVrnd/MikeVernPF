@@ -492,3 +492,41 @@
     width: clamp(240px, 70vw, 420px);
   }
 }
+
+@media (max-width: 600px) {
+  .loading-splash {
+    height: auto;
+    min-height: 100vh;
+    padding: 2.5rem 5vw 3.5rem;
+    gap: 1.5rem;
+  }
+
+  .loading-splash-header {
+    padding: 1.6rem 1.4rem;
+    text-align: center;
+  }
+
+  .loading-splash-header h1:first-child {
+    font-size: 2.1rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .loading-splash-header h1 {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .loading-splash-note {
+    position: static;
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .loading-splash-toast {
+    position: static;
+    margin-top: 0.75rem;
+    max-width: 100%;
+  }
+}
